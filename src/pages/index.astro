@@ -1,16 +1,38 @@
 ---
+// Astro db
+import { Brand, db, Product } from "astro:db";
+import { eq } from "astro:db";
 
+// Layouts
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Components
+import Billboard from "../components/Billboard.astro";
+
+// Data
+const ropa = await db
+	.select()
+	.from(Product)
+	.innerJoin(Brand, eq(Product.brandId, Brand.id))
+	.where(eq(Product.categoryId, 1));
+
+// Head metadata
+const title = "Astro Db Test";
+const description = "Proyecto para probar la nueva base de datos de Astro.";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+	{title}
+	{description}
+>
+	<header class="container mx-auto">
+		<h1 class="text-5xl sm:text-6xl font-bold text-accent">Saris</h1>
+		<p class="text-xl">Todo para el cuidado de la mujer</p>
+	</header>
+	<Billboard
+		billboardTitle="Lo último en moda"
+		billboardImg="https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1746&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+		billboardAltImg="Ropa"
+		productData={ropa}
+	/>
+</BaseLayout>

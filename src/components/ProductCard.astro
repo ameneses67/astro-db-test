@@ -1,0 +1,38 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+	id: number;
+	name: string;
+	description: string;
+	brand: string | null;
+	price: number;
+	image: string;
+}
+
+const { id, name, description, price, image, brand } = Astro.props;
+---
+
+<article
+	class="card bg-base-300 shadow-xl overflow-hidden"
+	data-id={id}
+>
+	<Image
+		src={image}
+		alt={name}
+		width={320}
+		height={400}
+		format="avif"
+		quality={"low"}
+		class="aspect-[3/4]"
+	/>
+	<div class="card-body p-2">
+		<p class="line-clamp-2">
+			<span class="font-semibold text-lg">{name}</span> - {description}
+		</p>
+		{brand && <p class="text-accent font-semibold">{brand}</p>}
+		<p class="font-extrabold text-lg">
+			${new Intl.NumberFormat().format(price)}
+		</p>
+	</div>
+</article>
