@@ -1,37 +1,42 @@
 ---
+// Astro tools
 import { Image } from "astro:assets";
 
+// Components
+import Modal from "./Modal.astro";
+
 interface Props {
-	id: number;
-	name: string;
-	description: string;
-	brand: string | undefined;
-	price: number;
-	image: string;
+  id: number;
+  name: string;
+  description: string;
+  brand: string | undefined;
+  price: number;
+  image: string;
 }
 
 const { id, name, description, price, image, brand } = Astro.props;
 ---
 
 <article
-	class="card bg-base-300 shadow-xl overflow-hidden"
-	data-id={id}
+  id="product-card"
+  class="card bg-base-300 shadow-xl overflow-hidden cursor-pointer"
+  data-id={id}
 >
-	<Image
-		src={image}
-		alt={name}
-		width={320}
-		height={400}
-		format="avif"
-		class="aspect-[3/4] object-cover"
-	/>
-	<div class="card-body p-2">
-		<p class="line-clamp-2">
-			<span class="font-semibold text-lg">{name}</span> - {description}
-		</p>
-		<p class="text-accent font-semibold h-6">{brand}</p>
-		<p class="font-extrabold text-lg">
-			${new Intl.NumberFormat().format(price)}
-		</p>
-	</div>
+  <Image
+    src={image}
+    alt={name}
+    width={320}
+    height={400}
+    format="avif"
+    class="aspect-[3/4] object-cover"
+  />
+  <div class="card-body p-2">
+    <p class="line-clamp-2">
+      <span class="font-semibold text-lg">{name}</span> - {description}
+    </p>
+    <p class="text-accent font-semibold h-6">{brand}</p>
+    <p class="font-extrabold text-lg">
+      ${new Intl.NumberFormat().format(price)}
+    </p>
+  </div>
 </article>
