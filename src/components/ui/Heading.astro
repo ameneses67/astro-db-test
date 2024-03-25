@@ -1,0 +1,48 @@
+---
+// Types
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<keyof typeof headingOptions> {
+	tagName: keyof typeof headingOptions;
+	size: keyof typeof headingOptions;
+	align?: keyof typeof textAlign;
+	hclasses?: string;
+	classes?: string;
+}
+
+const headingOptions = {
+	h1: "text-5xl sm:text-6xl",
+	h2: "text-4xl sm:text-5xl",
+	h3: "text-3xl sm:text-4xl",
+	h4: "text-2xl sm:text-3xl",
+	h5: "text-xl sm:text-2xl",
+	h6: "text-lg sm:text-xl",
+};
+
+const textAlign = {
+	left: "text-left",
+	center: "text-center",
+	right: "text-right",
+};
+
+const {
+	tagName,
+	size,
+	align = "left",
+	hclasses,
+	classes,
+	...rest
+} = Astro.props;
+const Tag = tagName;
+---
+
+<Tag
+	class:list={[
+		"font-bold leading-4",
+		headingOptions[size],
+		textAlign[align],
+		hclasses,
+	]}
+>
+	<slot />
+</Tag>

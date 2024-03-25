@@ -1,0 +1,27 @@
+---
+// Astro tools
+import { Image } from "astro:assets";
+
+interface Props {
+	id: number;
+	name: string;
+	image: string;
+}
+
+const { id, name, image } = Astro.props;
+---
+
+<article
+	data-id={id}
+	class="shadow-xl rounded-xl bg-base-300 overflow-hidden max-w-none sm:max-w-md"
+>
+	<Image
+		src={image}
+		alt={name}
+		width={450}
+		height={450}
+		format="avif"
+		class="w-full aspect-square object-cover"
+	/>
+	<h2 class="px-4 py-4 sm:py-8 text-2xl sm:text-3xl font-bold">{name}</h2>
+</article>

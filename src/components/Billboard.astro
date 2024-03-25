@@ -23,7 +23,7 @@ interface Props {
 		Brand: {
 			id: number;
 			name: string;
-		};
+		} | null;
 	}[];
 }
 
@@ -63,7 +63,7 @@ const { billboardTitle, billboardImg, billboardAltImg, productData } =
 					id={product.Product.id}
 					name={product.Product.name}
 					description={product.Product.description}
-					brand={product.Brand.name}
+					brand={product.Brand?.name}
 					price={product.Product.price}
 					image={product.Product.image}
 				/>

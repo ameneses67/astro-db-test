@@ -1,0 +1,43 @@
+---
+// Astro db
+import { db, Category } from "astro:db";
+
+// Utils
+import { slugify } from "../libs/utils";
+
+// Layouts
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Components
+import Header from "../components/Header.astro";
+import CategoryCard from "../components/CategoryCard.astro";
+
+// Data
+const categories = await db.select().from(Category);
+
+// Head metadata
+const title = "Categrías";
+const description = "Categorías de Saris";
+---
+
+<BaseLayout
+	{title}
+	{description}
+>
+	<Header />
+	<section class="container mx-auto">
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+			{
+				categories.map((cat) => (
+					<a href={slugify(cat.name)}>
+						<CategoryCard
+							id={cat.id}
+							name={cat.name}
+							image={cat.image}
+						/>
+					</a>
+				))
+			}
+		</div>
+	</section>
+</BaseLayout>

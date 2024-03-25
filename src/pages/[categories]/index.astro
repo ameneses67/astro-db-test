@@ -1,0 +1,59 @@
+---
+// Astro db
+import { db, Category } from "astro:db";
+
+// Astro tools
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// Utils
+import { slugify } from "../../libs/utils";
+
+// Components
+import Header from "../../components/Header.astro";
+import Section from "../../components/ui/Section.astro";
+import Heading from "../../components/ui/Heading.astro";
+import BillboardBody from "../../components/billboard/BillboardBody.astro";
+import { Product } from "astro:db";
+import { Brand } from "astro:db";
+import { eq } from "astro:db";
+
+// Routes
+export const getStaticPaths = (async () => {
+	const categories = await db.select().from(Category);
+
+	return categories.map((category) => ({
+		params: { categories: slugify(category.name) },
+		props: { category },
+	}));
+}) satisfies GetStaticPaths;
+
+const { category } = Astro.props;
+
+// Data
+const products = await db
+	.select()
+	.from(Product)
+	.leftJoin(Brand, eq(Product.brandId, Brand.id))
+	.where(eq(Product.categoryId, category.id));
+
+// Head metadata
+const title = category.name;
+const description = category.name;
+---
+
+<BaseLayout
+	{title}
+	{description}
+>
+	<Header />
+	<Section>
+		<Heading
+			tagName="h1"
+			size="h1"
+		>
+			{category.name}
+		</Heading>
+		<BillboardBody productData={products} />
+	</Section>
+</BaseLayout>

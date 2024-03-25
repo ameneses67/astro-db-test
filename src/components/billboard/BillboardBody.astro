@@ -1,0 +1,42 @@
+---
+// Components
+import ProductCard from "../../components/ProductCard.astro";
+
+interface Props {
+	productData: {
+		Product: {
+			id: number;
+			name: string;
+			description: string;
+			brandId: number | null;
+			categoryId: number;
+			subcategoryId: number;
+			price: number;
+			image: string;
+		};
+		Brand: {
+			id: number;
+			name: string;
+		} | null;
+	}[];
+}
+
+const { productData } = Astro.props;
+---
+
+<div
+	class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4"
+>
+	{
+		productData.map((product) => (
+			<ProductCard
+				id={product.Product.id}
+				name={product.Product.name}
+				description={product.Product.description}
+				brand={product.Brand?.name}
+				price={product.Product.price}
+				image={product.Product.image}
+			/>
+		))
+	}
+</div>

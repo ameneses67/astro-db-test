@@ -10,20 +10,35 @@ import {
 
 export default async function () {
 	await db.insert(Category).values([
-		{ id: 1, name: "Ropa" },
-		{ id: 2, name: "Cuidado personal" },
-		{ id: 3, name: "Joyería" },
+		{
+			id: 1,
+			name: "Ropa",
+			image:
+				"https://images.unsplash.com/photo-1605289355680-75fb41239154?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+		},
+		{
+			id: 2,
+			name: "Cuidado personal",
+			image:
+				"https://images.unsplash.com/photo-1526758097130-bab247274f58?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+		},
+		{
+			id: 3,
+			name: "Joyería",
+			image:
+				"https://images.unsplash.com/photo-1592317295760-5c1f677dfc78?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+		},
 	]);
 
 	await db.insert(Subcategory).values([
-		{ id: 1, name: "Vestidos", categoryId: 1 },
-		{ id: 2, name: "Blusas", categoryId: 1 },
-		{ id: 3, name: "Higiene", categoryId: 2 },
-		{ id: 4, name: "Cuidado de la piel", categoryId: 2 },
-		{ id: 5, name: "Belleza", categoryId: 2 },
-		{ id: 6, name: "Pulseras", categoryId: 3 },
-		{ id: 7, name: "Collares", categoryId: 3 },
-		{ id: 8, name: "Anillos", categoryId: 3 },
+		{ id: 1, name: "Vestidos", categoryId: 1, image: "" },
+		{ id: 2, name: "Blusas", categoryId: 1, image: "" },
+		{ id: 3, name: "Higiene", categoryId: 2, image: "" },
+		{ id: 4, name: "Cuidado de la piel", categoryId: 2, image: "" },
+		{ id: 5, name: "Belleza", categoryId: 2, image: "" },
+		{ id: 6, name: "Pulseras", categoryId: 3, image: "" },
+		{ id: 7, name: "Collares", categoryId: 3, image: "" },
+		{ id: 8, name: "Anillos", categoryId: 3, image: "" },
 	]);
 
 	await db.insert(Brand).values([
@@ -92,7 +107,6 @@ export default async function () {
 			id: 4,
 			name: "Suéter",
 			description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-			brandId: 1,
 			categoryId: 1,
 			subcategoryId: 2,
 			price: 740,
@@ -164,7 +178,7 @@ export default async function () {
 			subcategoryId: 6,
 			price: 480,
 			image:
-				"https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+				"https://images.unsplash.com/photo-1638768892257-8aec93a524e5?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 		},
 		{
 			id: 11,
@@ -175,18 +189,18 @@ export default async function () {
 			subcategoryId: 7,
 			price: 1450,
 			image:
-				"https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+				"https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 		},
 		{
 			id: 12,
-			name: "Anillo de compromiso, oro 14K",
+			name: "Juego de anillos de matrimonio",
 			description:
 				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel diam sit amet tortor.",
 			categoryId: 3,
 			subcategoryId: 8,
 			price: 2600,
 			image:
-				"https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+				"https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 		},
 	]);
 }

@@ -4,6 +4,7 @@ const Category = defineTable({
 	columns: {
 		id: column.number({ primaryKey: true, unique: true }),
 		name: column.text(),
+		image: column.text(),
 	},
 });
 
@@ -11,6 +12,7 @@ const Subcategory = defineTable({
 	columns: {
 		id: column.number({ primaryKey: true, unique: true }),
 		name: column.text(),
+		image: column.text(),
 		categoryId: column.number({ references: () => Category.columns.id }),
 	},
 });

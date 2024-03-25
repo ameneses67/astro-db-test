@@ -1,0 +1,39 @@
+---
+// Data
+const menu = [
+	{
+		name: "Categorías",
+		path: "/categorias",
+	},
+];
+---
+
+<header class="navbar bg-base-100 container mx-auto p-0">
+	<div class="flex-1">
+		<a
+			href="/"
+			class="btn btn-ghost text-3xl sm:text-4xl text-accent"
+			>Saris</a
+		>
+	</div>
+	<nav class="flex-none">
+		<ul class="menu menu-horizontal px-1">
+			{
+				menu.map((el) => (
+					<li>
+						<a href={el.path}>{el.name}</a>
+					</li>
+				))
+			}
+			<li>
+				<details>
+					<summary> Parent </summary>
+					<ul class="p-2 bg-base-100 rounded-t-none">
+						<li><a>Link 1</a></li>
+						<li><a>Link 2</a></li>
+					</ul>
+				</details>
+			</li>
+		</ul>
+	</nav>
+</header>

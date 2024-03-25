@@ -5,7 +5,7 @@ interface Props {
 	id: number;
 	name: string;
 	description: string;
-	brand: string | null;
+	brand: string | undefined;
 	price: number;
 	image: string;
 }
@@ -23,14 +23,13 @@ const { id, name, description, price, image, brand } = Astro.props;
 		width={320}
 		height={400}
 		format="avif"
-		quality={"low"}
-		class="aspect-[3/4]"
+		class="aspect-[3/4] object-cover"
 	/>
 	<div class="card-body p-2">
 		<p class="line-clamp-2">
 			<span class="font-semibold text-lg">{name}</span> - {description}
 		</p>
-		{brand && <p class="text-accent font-semibold">{brand}</p>}
+		<p class="text-accent font-semibold h-6">{brand}</p>
 		<p class="font-extrabold text-lg">
 			${new Intl.NumberFormat().format(price)}
 		</p>
