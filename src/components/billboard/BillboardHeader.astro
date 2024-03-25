@@ -3,33 +3,37 @@
 import { Image } from "astro:assets";
 
 interface Props {
-	billboardTitle: string;
-	billboardImgSrc: string;
-	billboardImgAlt: string;
+  categoryData: {
+    id: number;
+    name: string;
+    description: string;
+    image: string;
+  }[];
 }
 
-const { billboardTitle, billboardImgSrc, billboardImgAlt } = Astro.props;
+const { categoryData } = Astro.props;
 ---
 
-<div
-	class="h-40 sm:h-60 md:h-80 mx-auto bg-base-300 rounded-xl overflow-hidden relative"
->
-	<div
-		class="flex justify-center items-center absolute w-full h-full bg-base-100/30 p-8"
-	>
-		<h2
-			class="text-4xl sm:text-5xl text-white text-center font-bold [text-shadow:1px_1px_2px_var(--tw-shadow-color)] shadow-black"
-		>
-			{billboardTitle}
-		</h2>
-	</div>
-	<Image
-		src={billboardImgSrc}
-		alt={billboardImgAlt}
-		width={1200}
-		height={320}
-		format="avif"
-		quality={"low"}
-		class="w-full h-full object-cover"
-	/>
-</div>
+{
+  categoryData.map((billboard) => (
+    <div
+      data-id={billboard.id}
+      class="h-40 sm:h-60 md:h-80 mx-auto bg-base-300 rounded-xl overflow-hidden relative"
+    >
+      <div class="flex justify-center items-center absolute w-full h-full bg-base-100/30 p-8">
+        <h2 class="text-4xl sm:text-5xl text-white text-center font-bold [text-shadow:1px_1px_2px_var(--tw-shadow-color)] shadow-black">
+          {billboard.description}
+        </h2>
+      </div>
+      <Image
+        src={billboard.image}
+        alt={billboard.name}
+        width={1200}
+        height={320}
+        format="avif"
+        quality={"low"}
+        class="w-full h-full object-cover"
+      />
+    </div>
+  ))
+}

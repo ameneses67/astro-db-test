@@ -1,7 +1,6 @@
 ---
 // Astro db
-import { Brand, db, Product } from "astro:db";
-import { eq } from "astro:db";
+import { Brand, db, Product, Category, eq } from "astro:db";
 
 // Layouts
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -9,40 +8,55 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 // Components
 import Header from "../components/Header.astro";
 import Billboard from "../components/Billboard.astro";
+import Section from "../components/ui/Section.astro";
+import BillboardHeader from "../components/billboard/BillboardHeader.astro";
+import BillboardBody from "../components/billboard/BillboardBody.astro";
 
 // Data
 const ropa = await db
-	.select()
-	.from(Product)
-	.leftJoin(Brand, eq(Product.brandId, Brand.id))
-	.where(eq(Product.categoryId, 1));
+  .select()
+  .from(Product)
+  .leftJoin(Brand, eq(Product.brandId, Brand.id))
+  .where(eq(Product.categoryId, 1));
+
+const cuidadoPersonal = await db
+  .select()
+  .from(Product)
+  .leftJoin(Brand, eq(Product.brandId, Brand.id))
+  .where(eq(Product.categoryId, 2));
 
 const joyeria = await db
-	.select()
-	.from(Product)
-	.leftJoin(Brand, eq(Product.brandId, Brand.id))
-	.where(eq(Product.categoryId, 3));
+  .select()
+  .from(Product)
+  .leftJoin(Brand, eq(Product.brandId, Brand.id))
+  .where(eq(Product.categoryId, 3));
+
+const ropaData = await db.select().from(Category).where(eq(Category.id, 1));
+
+const cuidadoPersonalData = await db
+  .select()
+  .from(Category)
+  .where(eq(Category.id, 2));
+
+const joyeriaData = await db.select().from(Category).where(eq(Category.id, 3));
 
 // Head metadata
 const title = "Astro Db Test";
 const description = "Proyecto para probar la nueva base de datos de Astro.";
 ---
 
-<BaseLayout
-	{title}
-	{description}
->
-	<Header />
-	<Billboard
-		billboardTitle="Lo último en moda"
-		billboardImg="https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1746&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-		billboardAltImg="Ropa"
-		productData={ropa}
-	/>
-	<Billboard
-		billboardTitle="Joyería fina"
-		billboardImg="https://images.unsplash.com/photo-1638208170417-2464f9699df1?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-		billboardAltImg="Joyeria"
-		productData={joyeria}
-	/>
+<BaseLayout {title} {description}>
+  <Header />
+  <Section classes="space-y-4 sm:space-y-8">
+    <BillboardHeader categoryData={ropaData} />
+    <BillboardBody productData={ropa} />
+  </Section>
+  <Section classes="space-y-4 sm:space-y-8">
+    <BillboardHeader categoryData={cuidadoPersonalData} />
+    <BillboardBody productData={cuidadoPersonal} />
+  </Section>
+  <Section classes="space-y-4 sm:space-y-8">
+    <BillboardHeader categoryData={joyeriaData} />
+    <BillboardBody productData={joyeria} />
+  </Section>
 </BaseLayout>

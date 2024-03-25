@@ -1,3 +1,16 @@
-<section class="container mx-auto space-y-8 sm:space-y-16">
-	<slot />
+---
+// Tools
+import { twMerge } from "tailwind-merge";
+
+interface Props {
+  classes?: string;
+}
+
+const { classes } = Astro.props;
+---
+
+<section
+  class:list={[twMerge("container mx-auto space-y-8 sm:space-y-16", classes)]}
+>
+  <slot />
 </section>
