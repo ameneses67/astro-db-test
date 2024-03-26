@@ -1,0 +1,67 @@
+---
+// Astro tools
+import { Image } from "astro:assets";
+
+import Modal from "../components/Modal.astro";
+
+interface Props {
+	id: number;
+	name: string;
+	description: string;
+	brand: string | undefined;
+	price: number;
+	image: string;
+}
+
+const { id, name, description, price, image, brand } = Astro.props;
+---
+
+<modal-card data-id={id}>
+	<article
+		id="product-card"
+		class="card overflow-hidden cursor-pointer"
+		data-id={id}
+	>
+		<Image
+			src={image}
+			alt={name}
+			width={320}
+			height={400}
+			format="avif"
+			class="aspect-[3/4] object-cover"
+		/>
+		<div class="card-body justify-between h-1/4 p-2">
+			<p class="line-clamp-2">
+				<span class="font-semibold text-lg">{name}</span> - {description}
+			</p>
+			{brand && <p class="text-accent font-semibold">{brand}</p>}
+			<p class="font-extrabold text-lg">
+				${new Intl.NumberFormat().format(price)}
+			</p>
+		</div>
+	</article>
+	<Modal
+		{id}
+		{name}
+		{description}
+		{price}
+		{image}
+		{brand}
+	/>
+</modal-card>
+
+<script>
+	class ModalCard extends HTMLElement {
+		constructor() {
+			super();
+
+			const card = this.querySelector("article");
+			card?.addEventListener("click", () => {
+				const productModal = this.querySelector("dialog");
+				productModal?.showModal();
+			});
+		}
+	}
+
+	customElements.define("modal-card", ModalCard);
+</script>

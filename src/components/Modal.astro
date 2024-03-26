@@ -1,17 +1,50 @@
 ---
-// Components
-import ProductCard from "./ProductCard.astro";
+import { Image } from "astro:assets";
+
+interface Props {
+	id: number;
+	name: string;
+	description: string;
+	brand: string | undefined;
+	price: number;
+	image: string;
+}
+
+const { id, name, description, price, image, brand } = Astro.props;
 ---
 
-<dialog id="product-modal" class="modal">
-  <div class="modal-box">
-    <form method="dialog">
-      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-        >✕</button
-      >
-    </form>
-    <!-- <ProductCard /> -->
-    <h3 class="font-bold text-lg">Hello!</h3>
-    <p class="py-4">Press ESC key or click on ✕ button to close</p>
-  </div>
+<dialog
+	data-id={id}
+	id="product-modal"
+	class="modal"
+>
+	<div class="modal-box">
+		<form method="dialog">
+			<button class="btn btn-sm btn-circle absolute right-2 top-2 z-10"
+				>✕</button
+			>
+		</form>
+		<article
+			class="card bg-base-300 shadow-xl overflow-hidden cursor-pointer"
+			data-id={id}
+		>
+			<Image
+				src={image}
+				alt={name}
+				width={700}
+				height={900}
+				format="avif"
+				class="aspect-[3/4] object-cover"
+			/>
+			<div class="card-body p-2">
+				<p>
+					<span class="font-semibold text-lg">{name}</span> - {description}
+				</p>
+				{brand && <p class="text-accent font-semibold">{brand}</p>}
+				<p class="font-extrabold text-lg">
+					${new Intl.NumberFormat().format(price)}
+				</p>
+			</div>
+		</article>
+	</div>
 </dialog>

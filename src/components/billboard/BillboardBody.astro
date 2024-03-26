@@ -1,6 +1,7 @@
 ---
 // Components
 import ProductCard from "../../components/ProductCard.astro";
+import ModalCard from "../ModalCard.astro";
 
 interface Props {
 	productData: {
@@ -29,7 +30,7 @@ const { productData } = Astro.props;
 >
 	{
 		productData.map((product) => (
-			<ProductCard
+			<ModalCard
 				id={product.Product.id}
 				name={product.Product.name}
 				description={product.Product.description}

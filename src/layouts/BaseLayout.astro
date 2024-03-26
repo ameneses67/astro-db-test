@@ -6,28 +6,21 @@ import BaseHead from "./BaseHead.astro";
 import Modal from "../components/Modal.astro";
 
 interface Props {
-  title: string;
-  description: string;
+	title: string;
+	description: string;
 }
 
 const { title, description } = Astro.props;
 ---
 
 <html lang="es">
-  <BaseHead {title} {description} />
-  <body>
-    <main class="space-y-8 sm:space-y-16 px-2 sm:px-4">
-      <slot />
-    </main>
-    <Modal />
-  </body><script>
-    const productCards = document.querySelectorAll("#product-card");
-    const productModal = document.querySelector(
-      "#product-modal"
-    ) as HTMLDialogElement;
-
-    productCards.forEach((card) =>
-      card.addEventListener("click", () => productModal.showModal())
-    );
-  </script>
+	<BaseHead
+		{title}
+		{description}
+	/>
+	<body>
+		<main class="space-y-8 sm:space-y-16 px-2 sm:px-4">
+			<slot />
+		</main>
+	</body>
 </html>
