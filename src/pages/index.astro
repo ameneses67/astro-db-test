@@ -1,6 +1,6 @@
 ---
 // Astro db
-import { Brand, db, Product, Category, eq } from "astro:db";
+import { Size, Brand, db, Product, Category, eq } from "astro:db";
 
 // Layouts
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -11,25 +11,29 @@ import Section from "../components/ui/Section.astro";
 import BillboardHeader from "../components/billboard/BillboardHeader.astro";
 import BillboardBody from "../components/billboard/BillboardBody.astro";
 
-// Data
+// Product data
 const ropa = await db
   .select()
   .from(Product)
   .leftJoin(Brand, eq(Product.brandId, Brand.id))
+  .leftJoin(Size, eq(Product.sizeId, Size.id))
   .where(eq(Product.categoryId, 1));
 
 const cuidadoPersonal = await db
   .select()
   .from(Product)
   .leftJoin(Brand, eq(Product.brandId, Brand.id))
+  .leftJoin(Size, eq(Product.sizeId, Size.id))
   .where(eq(Product.categoryId, 2));
 
 const joyeria = await db
   .select()
   .from(Product)
   .leftJoin(Brand, eq(Product.brandId, Brand.id))
+  .leftJoin(Size, eq(Product.sizeId, Size.id))
   .where(eq(Product.categoryId, 3));
 
+// Category data
 const ropaData = await db.select().from(Category).where(eq(Category.id, 1));
 
 const cuidadoPersonalData = await db
