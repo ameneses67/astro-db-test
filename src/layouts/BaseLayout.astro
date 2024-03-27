@@ -3,7 +3,7 @@
 import BaseHead from "./BaseHead.astro";
 
 // Components
-import Modal from "../components/Modal.astro";
+import Header from "../components/Header.astro";
 
 interface Props {
 	title: string;
@@ -18,7 +18,8 @@ const { title, description } = Astro.props;
 		{title}
 		{description}
 	/>
-	<body>
+	<body class="space-y-8 sm:space-y-16">
+		<Header />
 		<main class="space-y-8 sm:space-y-16 px-2 sm:px-4">
 			<slot />
 		</main>

@@ -6,40 +6,39 @@ import { Size, Brand, db, Product, Category, eq } from "astro:db";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 // Components
-import Header from "../components/Header.astro";
 import Section from "../components/ui/Section.astro";
 import BillboardHeader from "../components/billboard/BillboardHeader.astro";
 import BillboardBody from "../components/billboard/BillboardBody.astro";
 
 // Product data
 const ropa = await db
-  .select()
-  .from(Product)
-  .leftJoin(Brand, eq(Product.brandId, Brand.id))
-  .leftJoin(Size, eq(Product.sizeId, Size.id))
-  .where(eq(Product.categoryId, 1));
+	.select()
+	.from(Product)
+	.leftJoin(Brand, eq(Product.brandId, Brand.id))
+	.leftJoin(Size, eq(Product.sizeId, Size.id))
+	.where(eq(Product.categoryId, 1));
 
 const cuidadoPersonal = await db
-  .select()
-  .from(Product)
-  .leftJoin(Brand, eq(Product.brandId, Brand.id))
-  .leftJoin(Size, eq(Product.sizeId, Size.id))
-  .where(eq(Product.categoryId, 2));
+	.select()
+	.from(Product)
+	.leftJoin(Brand, eq(Product.brandId, Brand.id))
+	.leftJoin(Size, eq(Product.sizeId, Size.id))
+	.where(eq(Product.categoryId, 2));
 
 const joyeria = await db
-  .select()
-  .from(Product)
-  .leftJoin(Brand, eq(Product.brandId, Brand.id))
-  .leftJoin(Size, eq(Product.sizeId, Size.id))
-  .where(eq(Product.categoryId, 3));
+	.select()
+	.from(Product)
+	.leftJoin(Brand, eq(Product.brandId, Brand.id))
+	.leftJoin(Size, eq(Product.sizeId, Size.id))
+	.where(eq(Product.categoryId, 3));
 
 // Category data
 const ropaData = await db.select().from(Category).where(eq(Category.id, 1));
 
 const cuidadoPersonalData = await db
-  .select()
-  .from(Category)
-  .where(eq(Category.id, 2));
+	.select()
+	.from(Category)
+	.where(eq(Category.id, 2));
 
 const joyeriaData = await db.select().from(Category).where(eq(Category.id, 3));
 
@@ -48,18 +47,20 @@ const title = "Astro Db Test";
 const description = "Proyecto para probar la nueva base de datos de Astro.";
 ---
 
-<BaseLayout {title} {description}>
-  <Header />
-  <Section classes="space-y-4 sm:space-y-8">
-    <BillboardHeader categoryData={ropaData} />
-    <BillboardBody productData={ropa} />
-  </Section>
-  <Section classes="space-y-4 sm:space-y-8">
-    <BillboardHeader categoryData={cuidadoPersonalData} />
-    <BillboardBody productData={cuidadoPersonal} />
-  </Section>
-  <Section classes="space-y-4 sm:space-y-8">
-    <BillboardHeader categoryData={joyeriaData} />
-    <BillboardBody productData={joyeria} />
-  </Section>
+<BaseLayout
+	{title}
+	{description}
+>
+	<Section classes="space-y-4 sm:space-y-8">
+		<BillboardHeader categoryData={ropaData} />
+		<BillboardBody productData={ropa} />
+	</Section>
+	<Section classes="space-y-4 sm:space-y-8">
+		<BillboardHeader categoryData={cuidadoPersonalData} />
+		<BillboardBody productData={cuidadoPersonal} />
+	</Section>
+	<Section classes="space-y-4 sm:space-y-8">
+		<BillboardHeader categoryData={joyeriaData} />
+		<BillboardBody productData={joyeria} />
+	</Section>
 </BaseLayout>

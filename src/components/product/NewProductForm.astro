@@ -1,0 +1,122 @@
+---
+// Astro db
+import { db, Category, Subcategory, Brand, Size, Color } from "astro:db";
+
+// Data
+const categories = await db.select().from(Category);
+
+const subcategories = await db.select().from(Subcategory);
+
+const brands = await db.select().from(Brand);
+
+const sizes = await db.select().from(Size);
+
+const colors = await db.select().from(Color);
+---
+
+<form
+	action=""
+	class="flex flex-col gap-4"
+>
+	<input
+		name="name"
+		type="text"
+		placeholder="Producto"
+		class="input input-bordered w-full max-w-xs"
+	/>
+	<input
+		name="description"
+		type="text"
+		placeholder="Descripción"
+		class="input input-bordered w-full max-w-xs"
+	/>
+	<select
+		class="select select-bordered w-full max-w-xs"
+	>
+		<option
+			disabled
+			selected
+			>Selecciona una marca</option
+		>
+		{
+			brands.map((brand) => (
+				<option value={brand.id}>{brand.name}</option>
+			))
+		}
+	</select>
+	<input
+		name="description"
+		type="text"
+		placeholder="Descripción"
+		class="input input-bordered w-full max-w-xs"
+	/>
+	<select
+		class="select select-bordered w-full max-w-xs"
+	>
+		<option
+			disabled
+			selected
+			>Selecciona una categoría</option
+		>
+		{
+			categories.map((category) => (
+				<option value={category.id}>{category.name}</option>
+			))
+		}
+	</select>
+	<select
+		class="select select-bordered w-full max-w-xs"
+	>
+		<option
+			disabled
+			selected
+			>Selecciona una subcategoría</option
+		>
+		{
+			subcategories.map((subcategory) => (
+				<option value={subcategory.id}>{subcategory.name}</option>
+			))
+		}
+	</select>
+	<input
+		name="price"
+		type="number"
+		placeholder="Precio"
+		class="input input-bordered w-full max-w-xs"
+	/>
+	<select
+		class="select select-bordered w-full max-w-xs"
+	>
+		<option
+			disabled
+			selected
+			>Selecciona un tamaño</option
+		>
+		{
+			sizes.map((size) => (
+				<option value={size.id}>{size.description}</option>
+			))
+		}
+	</select>
+	<select
+		class="select select-bordered w-full max-w-xs"
+	>
+		<option
+			disabled
+			selected
+			>Selecciona un color</option
+		>
+		{
+			colors.map((color) => (
+				<option value={color.id}>{color.description}</option>
+			))
+		}
+	</select>
+	<input
+		name="image"
+		type="text"
+		placeholder="URL imagen"
+		class="input input-bordered w-full max-w-xs"
+	/>
+	<button type="submit" class="btn btn-primary w-full max-w-xs">Crear producto</button>
+</form>

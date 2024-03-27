@@ -9,8 +9,8 @@ import { slugify } from "../libs/utils";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 // Components
-import Header from "../components/Header.astro";
 import CategoryCard from "../components/CategoryCard.astro";
+import Section from "../components/ui/Section.astro";
 
 // Data
 const categories = await db.select().from(Category);
@@ -24,8 +24,7 @@ const description = "Categorías de Saris";
 	{title}
 	{description}
 >
-	<Header />
-	<section class="container mx-auto">
+	<Section>
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
 			{
 				categories.map((cat) => (
@@ -39,5 +38,5 @@ const description = "Categorías de Saris";
 				))
 			}
 		</div>
-	</section>
+	</Section>
 </BaseLayout>

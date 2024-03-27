@@ -1,0 +1,28 @@
+---
+// Layouts
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Components
+import Section from "../components/ui/Section.astro";
+import NewProductForm from "../components/product/NewProductForm.astro";
+import Heading from "../components/ui/Heading.astro";
+
+// Head metadata
+const title = "Nuevo producto";
+const description = "Crear nuevo producto";
+---
+
+<BaseLayout
+	{title}
+	{description}
+>
+	<Section>
+		<Heading
+			tagName="h1"
+			size="h1"
+		>
+			Crear nuevo producto
+		</Heading>
+		<NewProductForm />
+	</Section>
+</BaseLayout>

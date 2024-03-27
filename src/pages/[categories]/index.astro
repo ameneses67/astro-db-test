@@ -17,6 +17,7 @@ import BillboardBody from "../../components/billboard/BillboardBody.astro";
 import { Product } from "astro:db";
 import { Brand } from "astro:db";
 import { eq } from "astro:db";
+import { Size } from "astro:db";
 
 // Routes
 export const getStaticPaths = (async () => {
@@ -35,6 +36,7 @@ const products = await db
 	.select()
 	.from(Product)
 	.leftJoin(Brand, eq(Product.brandId, Brand.id))
+	.leftJoin(Size, eq(Product.sizeId, Size.id))
 	.where(eq(Product.categoryId, category.id));
 
 // Head metadata
@@ -46,7 +48,6 @@ const description = category.name;
 	{title}
 	{description}
 >
-	<Header />
 	<Section>
 		<Heading
 			tagName="h1"
