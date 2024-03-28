@@ -11,36 +11,11 @@ import BillboardHeader from "../components/billboard/BillboardHeader.astro";
 import BillboardBody from "../components/billboard/BillboardBody.astro";
 
 // Product data
-const ropa = await db
+const products = await db
 	.select()
 	.from(Product)
 	.leftJoin(Brand, eq(Product.brandId, Brand.id))
-	.leftJoin(Size, eq(Product.sizeId, Size.id))
-	.where(eq(Product.categoryId, 1));
-
-const cuidadoPersonal = await db
-	.select()
-	.from(Product)
-	.leftJoin(Brand, eq(Product.brandId, Brand.id))
-	.leftJoin(Size, eq(Product.sizeId, Size.id))
-	.where(eq(Product.categoryId, 2));
-
-const joyeria = await db
-	.select()
-	.from(Product)
-	.leftJoin(Brand, eq(Product.brandId, Brand.id))
-	.leftJoin(Size, eq(Product.sizeId, Size.id))
-	.where(eq(Product.categoryId, 3));
-
-// Category data
-const ropaData = await db.select().from(Category).where(eq(Category.id, 1));
-
-const cuidadoPersonalData = await db
-	.select()
-	.from(Category)
-	.where(eq(Category.id, 2));
-
-const joyeriaData = await db.select().from(Category).where(eq(Category.id, 3));
+	.leftJoin(Size, eq(Product.sizeId, Size.id));
 
 // Head metadata
 const title = "Astro Db Test";
@@ -51,16 +26,7 @@ const description = "Proyecto para probar la nueva base de datos de Astro.";
 	{title}
 	{description}
 >
-	<Section classes="space-y-4 sm:space-y-8">
-		<BillboardHeader categoryData={ropaData} />
-		<BillboardBody productData={ropa} />
-	</Section>
-	<Section classes="space-y-4 sm:space-y-8">
-		<BillboardHeader categoryData={cuidadoPersonalData} />
-		<BillboardBody productData={cuidadoPersonal} />
-	</Section>
-	<Section classes="space-y-4 sm:space-y-8">
-		<BillboardHeader categoryData={joyeriaData} />
-		<BillboardBody productData={joyeria} />
+	<Section>
+		<BillboardBody productData={products} />
 	</Section>
 </BaseLayout>

@@ -1,50 +1,47 @@
 ---
 // Components
-import ProductCard from "../../components/ProductCard.astro";
-import ModalCard from "../ModalCard.astro";
+import ModalCard from "@components/product/ModalCard.astro";
 
 interface Props {
-  productData: {
-    Product: {
-      id: number;
-      name: string;
-      description: string;
-      brandId: number | null;
-      categoryId: number;
-      subcategoryId: number;
-      price: number;
-      sizeId: number | null;
-      image: string;
-    };
-    Brand: {
-      id: number;
-      name: string;
-    } | null;
-    Size: {
-      id: number;
-      code: string;
-      description: string;
-    } | null;
-  }[];
+	productData: {
+		Product: {
+			name: string;
+			description: string;
+			brandId: number | null;
+			categoryId: string;
+			subcategoryId: number;
+			price: number;
+			sizeId: number | null;
+			image: string;
+		};
+		Brand: {
+			id: number;
+			name: string;
+		} | null;
+		Size: {
+			id: number;
+			code: string;
+			description: string;
+		} | null;
+	}[];
 }
 
 const { productData } = Astro.props;
 ---
 
 <div
-  class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4"
+	class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4"
 >
-  {
-    productData.map((product) => (
-      <ModalCard
-        id={product.Product.id}
-        name={product.Product.name}
-        description={product.Product.description}
-        brand={product.Brand?.name}
-        size={product.Size?.code}
-        price={product.Product.price}
-        image={product.Product.image}
-      />
-    ))
-  }
+	{
+		productData.map((product) => (
+			<ModalCard
+				name={product.Product.name}
+				description={product.Product.description}
+				brand={product.Brand?.name}
+				size={product.Size?.code}
+				price={product.Product.price}
+				imagePath={product.Product.image}
+			/>
+		))
+	}
 </div>

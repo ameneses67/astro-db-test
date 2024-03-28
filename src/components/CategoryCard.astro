@@ -1,27 +1,52 @@
 ---
 // Astro tools
 import { Image } from "astro:assets";
+import Heading from "./ui/Heading.astro";
+
+// Types
+import type { ImageMetadata } from "astro";
+
+// Utilities
+import { slugify } from "@libs/utils";
 
 interface Props {
-	id: number;
+	id: string;
 	name: string;
-	image: string;
+	description: string;
+	imagePath: string;
 }
 
-const { id, name, image } = Astro.props;
+const { id, name, description, imagePath } = Astro.props;
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+	"/src/assets/*.{jpeg,jpg,png,gif}"
+);
+if (!images[imagePath])
+	throw new Error(
+		`"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`
+	);
 ---
 
-<article
+<a
+	href={slugify(name)}
 	data-id={id}
-	class="shadow-xl rounded-xl bg-base-300 overflow-hidden max-w-none sm:max-w-md"
+	class="shadow-xl bg-base-300 overflow-hidden max-w-none sm:max-w-md card"
 >
 	<Image
-		src={image}
+		src={images[imagePath]()}
 		alt={name}
 		width={450}
-		height={450}
 		format="avif"
 		class="w-full aspect-square object-cover"
 	/>
-	<h2 class="px-4 py-4 sm:py-8 text-2xl sm:text-3xl font-bold">{name}</h2>
-</article>
+	<div class="card-body">
+		<Heading
+			tagName="h2"
+			size="h3"
+			hclasses="card-title"
+		>
+			{name}
+		</Heading>
+		<p>{description}</p>
+	</div>
+</a>

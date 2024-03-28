@@ -2,9 +2,6 @@
 // Astro db
 import { db, Category } from "astro:db";
 
-// Utils
-import { slugify } from "../libs/utils";
-
 // Layouts
 import BaseLayout from "../layouts/BaseLayout.astro";
 
@@ -28,13 +25,12 @@ const description = "Categorías de Saris";
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
 			{
 				categories.map((cat) => (
-					<a href={slugify(cat.name)}>
-						<CategoryCard
-							id={cat.id}
-							name={cat.name}
-							image={cat.image}
-						/>
-					</a>
+					<CategoryCard
+						id={cat.id}
+						name={cat.name}
+						description={cat.description}
+						imagePath={cat.imagePath}
+					/>
 				))
 			}
 		</div>

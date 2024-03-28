@@ -1,6 +1,6 @@
 ---
 // Astro db
-import { db, Category } from "astro:db";
+import { db, eq, Category, Brand, Size, Product } from "astro:db";
 
 // Astro tools
 import type { GetStaticPaths } from "astro";
@@ -10,14 +10,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { slugify } from "../../libs/utils";
 
 // Components
-import Header from "../../components/Header.astro";
 import Section from "../../components/ui/Section.astro";
 import Heading from "../../components/ui/Heading.astro";
 import BillboardBody from "../../components/billboard/BillboardBody.astro";
-import { Product } from "astro:db";
-import { Brand } from "astro:db";
-import { eq } from "astro:db";
-import { Size } from "astro:db";
+import BillboardHeader from "@components/billboard/BillboardHeader.astro";
 
 // Routes
 export const getStaticPaths = (async () => {
@@ -49,12 +45,7 @@ const description = category.name;
 	{description}
 >
 	<Section>
-		<Heading
-			tagName="h1"
-			size="h1"
-		>
-			{category.name}
-		</Heading>
+		<BillboardHeader categoryData={category} />
 		<BillboardBody productData={products} />
 	</Section>
 </BaseLayout>

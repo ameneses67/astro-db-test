@@ -1,13 +1,13 @@
 import { column, defineDb, defineTable, NOW } from "astro:db";
-
-import { v4 as uuidv4 } from "uuid";
+import { uniqueId } from "../src/libs/utils";
 
 const Category = defineTable({
 	columns: {
-		id: column.number({ primaryKey: true, unique: true }),
+		id: column.text({ primaryKey: true, unique: true, default: uniqueId() }),
 		name: column.text({ unique: true }),
 		description: column.text(),
-		image: column.text(),
+		imagePath: column.text(),
+		published: column.date({ default: NOW }),
 	},
 });
 
@@ -17,7 +17,7 @@ const Subcategory = defineTable({
 		name: column.text({ unique: true }),
 		description: column.text(),
 		image: column.text(),
-		categoryId: column.number({ references: () => Category.columns.id }),
+		categoryId: column.text({ references: () => Category.columns.id }),
 	},
 });
 
@@ -46,14 +46,14 @@ const Color = defineTable({
 
 const Product = defineTable({
 	columns: {
-		id: column.number({ primaryKey: true, unique: true, default: uuidv4() }),
+		id: column.text({ primaryKey: true, unique: true, default: uniqueId() }),
 		name: column.text(),
 		description: column.text(),
 		brandId: column.number({
 			references: () => Brand.columns.id,
 			optional: true,
 		}),
-		categoryId: column.number({ references: () => Category.columns.id }),
+		categoryId: column.text({ references: () => Category.columns.id }),
 		subcategoryId: column.number({ references: () => Subcategory.columns.id }),
 		price: column.number(),
 		sizeId: column.number({
