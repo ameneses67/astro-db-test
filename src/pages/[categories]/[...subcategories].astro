@@ -1,9 +1,11 @@
 ---
 // Astro db
-import { db, eq, Category, Brand, Size, Product } from "astro:db";
+import { db, eq, Category, Subcategory, Brand, Size, Product } from "astro:db";
 
 // Astro tools
 import type { GetStaticPaths } from "astro";
+
+// Layouts
 import BaseLayout from "@layouts/BaseLayout.astro";
 
 // Utils
@@ -16,15 +18,20 @@ import BillboardHeader from "@components/billboard/BillboardHeader.astro";
 
 // Routes
 export const getStaticPaths = (async () => {
-	const categories = await db.select().from(Category);
+	const subcategories = await db
+		.select()
+		.from(Subcategory)
+		.innerJoin(Category, eq(Subcategory.categoryId, Category.id));
 
-	return categories.map((category) => ({
-		params: { categories: slugify(category.name) },
-		props: { category },
+	return subcategories.map((subcategory) => ({
+		params: {
+			subcategories: `${slugify(subcategory.Category.name)}/${slugify(subcategory.Subcategory.name)}`,
+		},
+		props: { subcategory },
 	}));
 }) satisfies GetStaticPaths;
 
-const { category } = Astro.props;
+const { subcategory } = Astro.props;
 
 // Data
 const products = await db
@@ -32,11 +39,11 @@ const products = await db
 	.from(Product)
 	.leftJoin(Brand, eq(Product.brandId, Brand.id))
 	.leftJoin(Size, eq(Product.sizeId, Size.id))
-	.where(eq(Product.categoryId, category.id));
+	.where(eq(Product.subcategoryId, subcategory.Subcategory.id));
 
 // Head metadata
-const title = category.name;
-const description = category.name;
+const title = subcategory.Subcategory.name;
+const description = subcategory.Subcategory.name;
 ---
 
 <BaseLayout
@@ -44,7 +51,7 @@ const description = category.name;
 	{description}
 >
 	<Section>
-		<BillboardHeader categoryData={category} />
+		<BillboardHeader categoryData={subcategory.Subcategory} />
 		<BillboardBody productData={products} />
 	</Section>
 </BaseLayout>

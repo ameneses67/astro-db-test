@@ -19,3 +19,17 @@ export const uniqueId = () => {
 	const randomness = Math.random().toString(36).substring(2);
 	return dateString + randomness;
 };
+
+interface Array {
+	id: string;
+	name: string;
+	description: string;
+	imagePath: string;
+	published: Date;
+}
+
+export const removeDuplicates = (array: Array[]) => {
+	const jsonObject = array.map((el) => JSON.stringify(el));
+	const uniqueSet = new Set(jsonObject);
+	return Array.from(uniqueSet).map((el) => JSON.parse(el));
+};

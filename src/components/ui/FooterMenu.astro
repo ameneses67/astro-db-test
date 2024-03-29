@@ -1,0 +1,23 @@
+---
+// Utilities
+import { slugify } from "@libs/utils";
+
+// Components
+import Heading from "@ui/Heading.astro";
+
+interface Props {
+	categoryName: string;
+	subcategoryName: string;
+}
+
+const { categoryName, subcategoryName } = Astro.props;
+---
+
+<nav>
+	<h6 class="footer-title uppercase">{categoryName}</h6>
+	<a
+		href={slugify(subcategoryName)}
+		class="link link-hover"
+		>{subcategoryName}</a
+	>
+</nav>

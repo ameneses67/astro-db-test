@@ -70,5 +70,12 @@ const Product = defineTable({
 });
 
 export default defineDb({
-	tables: { Category, Subcategory, Size, Color, Product, Brand },
+	tables: {
+		Category,
+		Subcategory,
+		Size,
+		Color,
+		Product,
+		Brand,
+	},
 });
