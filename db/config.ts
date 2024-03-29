@@ -13,10 +13,10 @@ const Category = defineTable({
 
 const Subcategory = defineTable({
 	columns: {
-		id: column.number({ primaryKey: true, unique: true }),
+		id: column.text({ primaryKey: true, unique: true, default: uniqueId() }),
 		name: column.text({ unique: true }),
 		description: column.text(),
-		image: column.text(),
+		imagePath: column.text(),
 		categoryId: column.text({ references: () => Category.columns.id }),
 	},
 });
@@ -54,7 +54,7 @@ const Product = defineTable({
 			optional: true,
 		}),
 		categoryId: column.text({ references: () => Category.columns.id }),
-		subcategoryId: column.number({ references: () => Subcategory.columns.id }),
+		subcategoryId: column.text({ references: () => Subcategory.columns.id }),
 		price: column.number(),
 		sizeId: column.number({
 			references: () => Size.columns.id,

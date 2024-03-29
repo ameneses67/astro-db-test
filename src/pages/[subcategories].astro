@@ -25,11 +25,12 @@ export const getStaticPaths = (async () => {
 
 	return subcategories.map((subcategory) => ({
 		params: {
-			subcategories: `${slugify(subcategory.Category.name)}/${slugify(subcategory.Subcategory.name)}`,
+			subcategories: slugify(subcategory.Subcategory.name),
 		},
 		props: { subcategory },
 	}));
 }) satisfies GetStaticPaths;
+console.log(getStaticPaths);
 
 const { subcategory } = Astro.props;
 
@@ -51,7 +52,12 @@ const description = subcategory.Subcategory.name;
 	{description}
 >
 	<Section>
-		<BillboardHeader categoryData={subcategory.Subcategory} />
+		<BillboardHeader
+			id={subcategory.Subcategory.id}
+			name={subcategory.Subcategory.name}
+			description={subcategory.Subcategory.description}
+			imagePath={subcategory.Subcategory.imagePath}
+		/>
 		<BillboardBody productData={products} />
 	</Section>
 </BaseLayout>

@@ -44,7 +44,12 @@ const description = category.name;
 	{description}
 >
 	<Section>
-		<BillboardHeader categoryData={category} />
+		<BillboardHeader
+			id={category.id}
+			name={category.name}
+			description={category.description}
+			imagePath={category.imagePath}
+		/>
 		<BillboardBody productData={products} />
 	</Section>
 </BaseLayout>
