@@ -3,86 +3,86 @@
 import { db, eq, Category, Subcategory } from "astro:db";
 
 // Utilities
-import { slugify, removeDuplicates } from "@libs/utils";
+import { slugify } from "@libs/utils";
 
 // Data
 const ropaSub = await db
-	.select()
-	.from(Subcategory)
-	.innerJoin(Category, eq(Subcategory.categoryId, Category.id))
-	.where(eq(Subcategory.categoryId, "1"));
+  .select()
+  .from(Subcategory)
+  .innerJoin(Category, eq(Subcategory.categoryId, Category.id))
+  .where(eq(Subcategory.categoryId, "1"));
 
 const cuidadoPersonalSub = await db
-	.select()
-	.from(Subcategory)
-	.innerJoin(Category, eq(Subcategory.categoryId, Category.id))
-	.where(eq(Subcategory.categoryId, "2"));
+  .select()
+  .from(Subcategory)
+  .innerJoin(Category, eq(Subcategory.categoryId, Category.id))
+  .where(eq(Subcategory.categoryId, "2"));
 
 const joyeriaSub = await db
-	.select()
-	.from(Subcategory)
-	.innerJoin(Category, eq(Subcategory.categoryId, Category.id))
-	.where(eq(Subcategory.categoryId, "3"));
+  .select()
+  .from(Subcategory)
+  .innerJoin(Category, eq(Subcategory.categoryId, Category.id))
+  .where(eq(Subcategory.categoryId, "3"));
 ---
 
 <footer class="footer p-10 bg-base-200 text-base-content">
-	<nav>
-		<h6 class="footer-title uppercase">{ropaSub[0].Category.name}</h6>
-		{
-			ropaSub.map((sub) => (
-				<a
-					href={`${slugify(sub.Category.name)}/${slugify(sub.Subcategory.name)}`}
-					class="link link-hover"
-				>
-					{sub.Subcategory.name}
-				</a>
-			))
-		}
-	</nav>
-	<nav>
-		<h6 class="footer-title uppercase">
-			{cuidadoPersonalSub[0].Category.name}
-		</h6>
-		{
-			cuidadoPersonalSub.map((sub) => (
-				<a
-					href={`${slugify(sub.Category.name)}/${slugify(sub.Subcategory.name)}`}
-					class="link link-hover"
-				>
-					{sub.Subcategory.name}
-				</a>
-			))
-		}
-	</nav>
-	<nav>
-		<h6 class="footer-title uppercase">{joyeriaSub[0].Category.name}</h6>
-		{
-			joyeriaSub.map((sub) => (
-				<a
-					href={`${slugify(sub.Category.name)}/${slugify(sub.Subcategory.name)}`}
-					class="link link-hover"
-				>
-					{sub.Subcategory.name}
-				</a>
-			))
-		}
-	</nav>
-	<form>
-		<h6 class="footer-title">Promociones</h6>
-		<fieldset class="form-control max-w-xs">
-			<label class="label">
-				<span class="label-text"
-					>Déjanos tu correo y mantente actualizada con nuestra promociones</span
-				>
-			</label>
-			<div class="join">
-				<input
-					type="text"
-					placeholder="nombre@correo.com"
-					class="input input-bordered join-item"
-				/>
-				<button class="btn btn-primary join-item">Enviar</button>
-			</div>
-		</fieldset>
-	</form>
+  <nav>
+    <h6 class="footer-title uppercase">{ropaSub[0].Category.name}</h6>
+    {
+      ropaSub.map((sub) => (
+        <a
+          href={`/${slugify(sub.Category.name)}/${slugify(sub.Subcategory.name)}/`}
+          class="link link-hover"
+        >
+          {sub.Subcategory.name}
+        </a>
+      ))
+    }
+  </nav>
+  <nav>
+    <h6 class="footer-title uppercase">
+      {cuidadoPersonalSub[0].Category.name}
+    </h6>
+    {
+      cuidadoPersonalSub.map((sub) => (
+        <a
+          href={`/${slugify(sub.Category.name)}/${slugify(sub.Subcategory.name)}/`}
+          class="link link-hover"
+        >
+          {sub.Subcategory.name}
+        </a>
+      ))
+    }
+  </nav>
+  <nav>
+    <h6 class="footer-title uppercase">{joyeriaSub[0].Category.name}</h6>
+    {
+      joyeriaSub.map((sub) => (
+        <a
+          href={`/${slugify(sub.Category.name)}/${slugify(sub.Subcategory.name)}/`}
+          class="link link-hover"
+        >
+          {sub.Subcategory.name}
+        </a>
+      ))
+    }
+  </nav>
+  <form>
+    <h6 class="footer-title">Promociones</h6>
+    <fieldset class="form-control max-w-xs">
+      <label class="label">
+        <span class="label-text"
+          >Déjanos tu correo y mantente actualizada con nuestra promociones</span
+        >
+      </label>
+      <div class="join">
+        <input
+          type="text"
+          placeholder="nombre@correo.com"
+          class="input input-bordered join-item"
+        />
+        <button class="btn btn-primary join-item">Enviar</button>
+      </div>
+    </fieldset>
+  </form>
 </footer>
