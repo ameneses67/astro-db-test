@@ -15,21 +15,44 @@ import NewCategoryForm from "@components/category/NewCategoryForm.astro";
 import { uniqueId } from "@libs/utils";
 
 // Form submission
+export const errors = { name: "", description: "", imagePath: "" };
 if (Astro.request.method === "POST") {
-	const formData = await Astro.request.formData();
-	const name = formData.get("name");
-	const description = formData.get("description");
-	const imagePath = formData.get("imagePath");
+  try {
+    const formData = await Astro.request.formData();
+    const name = formData.get("name");
+    const description = formData.get("description");
+    const imagePath = formData.get("imagePath");
 
-	if (
-		typeof name === "string" &&
-		typeof description === "string" &&
-		typeof imagePath === "string"
-	) {
-		await db.insert(Category).values({ name, description, imagePath });
-	}
+    if (
+      typeof name === "string" &&
+      typeof description === "string" &&
+      typeof imagePath === "string"
+    ) {
+      // if (name.length < 1) {
+      //   errors.name += "Ingresa el nombre de la categoría";
+      // }
 
-	Astro.redirect("/admin/categorias");
+      // if (description.length < 1) {
+      //   errors.description += "Ingresa la descripción de la categoría";
+      // }
+
+      // if (imagePath.length < 1) {
+      //   errors.imagePath += "Ingresa el nombre del archivo de la imagen";
+      // }
+
+      // const hasErrors = Object.values(errors).some((msg) => msg);
+      // if (!hasErrors) {
+      //   await db.insert(Category).values({ name, description, imagePath });
+      //   return Astro.redirect("/admin/categorias");
+      // }
+      await db.insert(Category).values({ name, description, imagePath });
+      return Astro.redirect("/admin/categorias");
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
 }
 
 // Head metadata
@@ -37,18 +60,11 @@ const title = "Nueva categoría";
 const description = "Crear nueva categoría";
 ---
 
-<BaseLayout
-	{title}
-	{description}
->
-	<Section>
-		<Heading
-			tagName="h1"
-			size="h1"
-			title="Crear categoría"
-		>
-			Añade una nueva categoría
-		</Heading>
-		<NewCategoryForm />
-	</Section>
+<BaseLayout {title} {description}>
+  <Section>
+    <Heading tagName="h1" size="h1" title="Crear categoría">
+      Añade una nueva categoría
+    </Heading>
+    <NewCategoryForm />
+  </Section>
 </BaseLayout>

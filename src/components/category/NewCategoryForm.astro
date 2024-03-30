@@ -1,34 +1,62 @@
 ---
+// Astro tools
+import { Icon } from "astro-icon/components";
+
 // Components
 import Button from "@components/ui/Button.astro";
+
+// Errors
+import { errors } from "src/pages/admin/nueva-categoria.astro";
 ---
 
 <form method="POST">
-	<div class="flex flex-col md:flex-row items-start gap-4">
-		<input
-			name="name"
-			type="text"
-			placeholder="Categoría"
-			class="input input-bordered w-full max-w-xs"
-		/>
-		<textarea
-			name="description"
-			class="textarea textarea-bordered w-full max-w-xs"
-			placeholder="Descripción"
-		></textarea>
-		<input
-			name="imagePath"
-			type="text"
-			placeholder="URL imagen"
-			class="input input-bordered w-full max-w-xs"
-		/>
-	</div>
-	<button type="submit">Crear</button>
-	<!-- <Button
-		color="accent"
-		classes="px-6 mt-4"
-		type="submit"
-	>
-		Crear
-	</Button> -->
+  <div class="flex flex-col md:flex-row items-start gap-4">
+    <div class="space-y-2 w-full max-w-xs">
+      <input
+        name="name"
+        type="text"
+        placeholder="Categoría"
+        class="input input-bordered w-full"
+      />
+      {
+        errors.name && (
+          <p class="flex items-center gap-2 text-error text-sm">
+            <Icon name="lucide:circle-x" />
+            <span>{errors.name}</span>
+          </p>
+        )
+      }
+    </div>
+    <div class="space-y-2 w-full max-w-xs">
+      <textarea
+        name="description"
+        class="textarea textarea-bordered w-full"
+        placeholder="Descripción"></textarea>
+      {
+        errors.description && (
+          <p class="flex items-center gap-2 text-error text-sm">
+            <Icon name="lucide:circle-x" />
+            <span>{errors.description}</span>
+          </p>
+        )
+      }
+    </div>
+    <div class="space-y-2 w-full max-w-xs">
+      <input
+        name="imagePath"
+        type="text"
+        placeholder="URL imagen"
+        class="input input-bordered w-full"
+      />
+      {
+        errors.imagePath && (
+          <p class="flex items-center gap-2 text-error text-sm">
+            <Icon name="lucide:circle-x" />
+            <span>{errors.imagePath}</span>
+          </p>
+        )
+      }
+    </div>
+  </div>
+  <button type="submit" class="btn btn-accent mt-4 px-6">Crear</button>
 </form>
