@@ -1,3 +1,6 @@
+import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "clsx";
+
 export const formatCurr = new Intl.NumberFormat("es-MX", {
 	style: "currency",
 	currency: "USD",
@@ -33,3 +36,7 @@ export const removeDuplicates = (array: Array[]) => {
 	const uniqueSet = new Set(jsonObject);
 	return Array.from(uniqueSet).map((el) => JSON.parse(el));
 };
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs));
+}

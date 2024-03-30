@@ -1,0 +1,34 @@
+---
+// Components
+import Button from "@components/ui/Button.astro";
+---
+
+<form method="POST">
+	<div class="flex flex-col md:flex-row items-start gap-4">
+		<input
+			name="name"
+			type="text"
+			placeholder="Categoría"
+			class="input input-bordered w-full max-w-xs"
+		/>
+		<textarea
+			name="description"
+			class="textarea textarea-bordered w-full max-w-xs"
+			placeholder="Descripción"
+		></textarea>
+		<input
+			name="imagePath"
+			type="text"
+			placeholder="URL imagen"
+			class="input input-bordered w-full max-w-xs"
+		/>
+	</div>
+	<button type="submit">Crear</button>
+	<!-- <Button
+		color="accent"
+		classes="px-6 mt-4"
+		type="submit"
+	>
+		Crear
+	</Button> -->
+</form>

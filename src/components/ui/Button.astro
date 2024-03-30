@@ -1,0 +1,72 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+import { cn } from "@libs/utils";
+
+interface Props extends HTMLAttributes<"a"> {
+	href?: string;
+	color: keyof typeof colors;
+	style?: keyof typeof styles;
+	size?: keyof typeof sizes;
+	rounded?: boolean;
+	glass?: boolean;
+	classes?: string;
+}
+
+const {
+	href,
+	color,
+	style,
+	size = "md",
+	rounded,
+	glass,
+	classes,
+	...rest
+} = Astro.props;
+
+const colors = {
+	neutral: "btn-nuetral",
+	primary: "btn-primary",
+	secondary: "btn-secondary",
+	accent: "btn-accent",
+	info: "btn-info",
+	success: "btn-success",
+	warning: "btn-warning",
+	error: "btn-error",
+};
+
+const styles = {
+	ghost: "btn-ghost",
+	link: "btn-link",
+	outline: "btn-outline",
+	active: "btn-active",
+	disabled: "btn-disabled",
+	circle: "btn-circle",
+	square: "btn-square",
+};
+
+const sizes = {
+	xs: "btn-xs",
+	sm: "btn-sm",
+	md: "btn-md",
+	lg: "btn-lg",
+	wide: "btn-wide",
+	block: "btn-block",
+};
+---
+
+<a
+	href={href}
+	class:list={cn(
+		"btn",
+		colors[color],
+		style !== undefined && styles[style],
+		sizes[size],
+		rounded && "rounded-3xl",
+		glass && "glass",
+		classes
+	)}
+	{...rest}
+>
+	<slot />
+</a>

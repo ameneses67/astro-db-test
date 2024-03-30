@@ -3,11 +3,11 @@
 import { db, Category } from "astro:db";
 
 // Layouts
-import BaseLayout from "../layouts/BaseLayout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 
 // Components
-import CategoryCard from "../components/CategoryCard.astro";
-import Section from "../components/ui/Section.astro";
+import CategoryCard from "@components/category/CategoryCard.astro";
+import Section from "@ui/Section.astro";
 
 // Data
 const categories = await db.select().from(Category);

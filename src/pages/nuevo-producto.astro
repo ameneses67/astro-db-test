@@ -2,6 +2,12 @@
 // Render mode
 export const prerender = false;
 
+// Astro db
+import { db, Product } from "astro:db";
+
+// Utilities
+import { uniqueId } from "@libs/utils";
+
 // Layouts
 import BaseLayout from "../layouts/BaseLayout.astro";
 
@@ -9,6 +15,50 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/ui/Section.astro";
 import NewProductForm from "../components/product/NewProductForm.astro";
 import Heading from "../components/ui/Heading.astro";
+
+// Create new product
+if (Astro.request.method === "POST") {
+	// Parse form data
+	const formData = await Astro.request.formData();
+	const name = formData.get("name");
+	const description = formData.get("description");
+	const brandId = formData.get("brandId");
+	const categoryId = formData.get("categoryId");
+	const subcategoryId = formData.get("subcategoryId");
+	const price = formData.get("price");
+	const sizeId = formData.get("sizeId");
+	const colorId = formData.get("colorId");
+	const image = formData.get("imagePath");
+
+	// Form data validation
+	if (
+		typeof name === "string" &&
+		typeof description === "string" &&
+		typeof brandId === "number" &&
+		typeof categoryId === "string" &&
+		typeof subcategoryId === "string" &&
+		typeof price === "number" &&
+		typeof sizeId === "number" &&
+		typeof colorId === "number" &&
+		typeof image === "string"
+	) {
+		// Insert form data into the product table
+		await db.insert(Product).values({
+			id: uniqueId(),
+			name,
+			description,
+			brandId,
+			categoryId,
+			subcategoryId,
+			price,
+			sizeId,
+			colorId,
+			image,
+		});
+	}
+}
+
+const products = await db.select().from(Product);
 
 // Head metadata
 const title = "Nuevo producto";
@@ -23,9 +73,19 @@ const description = "Crear nuevo producto";
 		<Heading
 			tagName="h1"
 			size="h1"
+			title="Nuevo producto"
 		>
-			Crear nuevo producto
+			Añade un nuevo producto
 		</Heading>
 		<NewProductForm />
+		<ul>
+			{
+				products.map((product) => (
+					<li>
+						{product.id} - {product.name}
+					</li>
+				))
+			}
+		</ul>
 	</Section>
 </BaseLayout>

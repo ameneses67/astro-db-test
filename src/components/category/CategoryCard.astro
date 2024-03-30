@@ -1,13 +1,15 @@
 ---
 // Astro tools
 import { Image } from "astro:assets";
-import Heading from "./ui/Heading.astro";
 
 // Types
 import type { ImageMetadata } from "astro";
 
 // Utilities
 import { slugify } from "@libs/utils";
+
+// Components
+import Heading from "@ui/Heading.astro";
 
 interface Props {
 	id: string;
@@ -43,10 +45,10 @@ if (!images[imagePath])
 		<Heading
 			tagName="h2"
 			size="h3"
-			hclasses="card-title"
+			hclass="card-title"
+			title={name}
 		>
-			{name}
+			{description}
 		</Heading>
-		<p>{description}</p>
 	</div>
 </a>

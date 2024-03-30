@@ -1,0 +1,94 @@
+---
+// Astro db
+import { db, Category } from "astro:db";
+
+// Astro tools
+import { Icon } from "astro-icon/components";
+
+// Layouts
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+// Components
+import Heading from "@components/ui/Heading.astro";
+import Section from "@ui/Section.astro";
+import Button from "@ui/Button.astro";
+
+// Data
+const categories = await db.select().from(Category);
+
+// Head metadata
+const title = "Categorías";
+const description = "Listado de categorías";
+---
+
+<BaseLayout
+	{title}
+	{description}
+>
+	<Section>
+		<div class="flex justify-between items-center">
+			<Heading
+				tagName="h1"
+				size="h1"
+				title="Categorías"
+			>
+				Administra las categorías de tu tienda
+			</Heading>
+			<Button
+				href="/admin/nueva-categoria"
+				color="accent"
+				style="outline"
+			>
+				<Icon
+					name="lucide:circle-plus"
+					size={20}
+				/>
+				Crear nueva
+			</Button>
+		</div>
+		<div class="overflow-x-auto">
+			<table class="table table-zebra">
+				<!-- head -->
+				<thead>
+					<tr>
+						<th>Categoría / Id</th>
+						<th>Descripción</th>
+						<th>Imagen</th>
+						<th>Fecha</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- row 1 -->
+					{
+						categories.map((category) => (
+							<tr>
+								<th>
+									<p>{category.name}</p>
+									<p class="font-light">{category.id}</p>
+								</th>
+								<td>{category.description}</td>
+								<td>{category.imagePath}</td>
+								<td>
+									{category.published.toLocaleDateString("es-MX", {
+										year: "2-digit",
+										month: "short",
+										day: "numeric",
+									})}
+								</td>
+								<td>
+									<Button
+										color="primary"
+										style="ghost"
+									>
+										<Icon name="lucide:ellipsis-vertical" />
+									</Button>
+								</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</div>
+	</Section>
+</BaseLayout>
