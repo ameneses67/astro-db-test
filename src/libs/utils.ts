@@ -40,3 +40,28 @@ export const removeDuplicates = (array: Array[]) => {
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
+
+export const getFormattedDate = (date: Date) =>
+	date
+		? new Date(date).toLocaleDateString("es-MX", {
+				year: "numeric",
+				month: "short",
+				day: "numeric",
+		  })
+		: "";
+
+export const imageFileValidation = (str: string): boolean => {
+	const regex = new RegExp(
+		/[^\s]+(.*?).(jpg|jpeg|png|gif|webp|avif|JPG|JPEG|PNG|GIF|WEBP|AVIF)$/
+	);
+
+	if (str === null) {
+		return false;
+	}
+
+	if (regex.test(str) === true) {
+		return true;
+	} else {
+		return false;
+	}
+};

@@ -19,7 +19,7 @@ const { name, description, size, price, imagePath, brand } = Astro.props;
 const images = import.meta.glob<{ default: ImageMetadata }>(
 	"/src/assets/*.{jpeg,jpg,png,gif}"
 );
-if (!images[imagePath])
+if (!images[`/src/assets/${imagePath}`])
 	throw new Error(
 		`"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`
 	);
@@ -37,7 +37,7 @@ if (!images[imagePath])
 		</form>
 		<article class="card bg-base-300 shadow-xl overflow-hidden cursor-pointer">
 			<Image
-				src={images[imagePath]()}
+				src={images[`/src/assets/${imagePath}`]()}
 				alt={name}
 				width={700}
 				height={900}
@@ -46,9 +46,11 @@ if (!images[imagePath])
 			/>
 			<div class="card-body p-2">
 				<p>
-					<span class="font-semibold text-lg">{name}</span> - {description}
+					<span class="font-semibold text-lg capitalize">{name}</span> - {
+						description
+					}
 				</p>
-				{brand && <p class="text-accent font-semibold">{brand}</p>}
+				{brand && <p class="text-accent font-semibold uppercase">{brand}</p>}
 				<p class="font-extrabold text-lg">
 					${new Intl.NumberFormat().format(price)}
 					<span>{size}</span>

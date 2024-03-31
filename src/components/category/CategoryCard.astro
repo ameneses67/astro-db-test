@@ -23,7 +23,7 @@ const { id, name, description, imagePath } = Astro.props;
 const images = import.meta.glob<{ default: ImageMetadata }>(
 	"/src/assets/*.{jpeg,jpg,png,gif}"
 );
-if (!images[imagePath])
+if (!images[`/src/assets/${imagePath}`])
 	throw new Error(
 		`"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`
 	);
@@ -35,7 +35,7 @@ if (!images[imagePath])
 	class="shadow-xl bg-base-300 overflow-hidden max-w-none sm:max-w-md card"
 >
 	<Image
-		src={images[imagePath]()}
+		src={images[`/src/assets/${imagePath}`]()}
 		alt={name}
 		width={450}
 		format="avif"
@@ -45,7 +45,7 @@ if (!images[imagePath])
 		<Heading
 			tagName="h2"
 			size="h3"
-			hclass="card-title"
+			hclass="card-title capitalize"
 			title={name}
 		>
 			{description}
