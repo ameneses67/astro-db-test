@@ -71,7 +71,7 @@ const description = "Listado de categorías";
 								<td>{category.description}</td>
 								<td>{category.imagePath}</td>
 								<td>{getFormattedDate(category.published)}</td>
-								<td class="relative">
+								<td class="relative max-w-fit">
 									<Button
 										color="primary"
 										style="ghost"
@@ -79,13 +79,10 @@ const description = "Listado de categorías";
 									>
 										<Icon name="lucide:ellipsis-vertical" />
 									</Button>
-									<ul
-										id="actions-ul"
-										class="menu bg-base-200 rounded-box max-w-fit absolute right-4 top-full z-10 hidden"
-									>
+									<ul class="menu bg-base-300 rounded-box max-w-fit absolute right-4 top-full z-10 hidden">
 										<li>
 											<a
-												id="cat-edit"
+												class="cat-edit"
 												data-id={category.id}
 											>
 												<Icon
@@ -94,8 +91,10 @@ const description = "Listado de categorías";
 												/>
 												Editar
 											</a>
+										</li>
+										<li>
 											<a
-												id="cat-del"
+												class="cat-del"
 												data-id={category.id}
 											>
 												<Icon
@@ -119,33 +118,33 @@ const description = "Listado de categorías";
 <script>
 	import { db, eq, Category } from "astro:db";
 
-	const actionsBtn = document.querySelectorAll(".actions-btn");
-	console.log(actionsBtn);
-	const actionsUl = document.querySelectorAll(
-		"#actions-ul"
-	) as NodeListOf<HTMLUListElement>;
-	const catEditBtn = document.querySelectorAll(
-		"#cat-edit"
+	// Selectors
+	const actionsBtn = document.querySelectorAll(
+		".actions-btn"
 	) as NodeListOf<HTMLAnchorElement>;
+
 	const catDelBtn = document.querySelectorAll(
-		"#cat-del"
+		".cat-del"
 	) as NodeListOf<HTMLAnchorElement>;
 
 	// Show actions menu
 	actionsBtn.forEach((btn) =>
-		btn.addEventListener("click", () => console.log("click"))
+		btn.addEventListener("click", () => toggleActionsMenu(btn))
 	);
 
-	// async function deleteCategory(id: string) {
-	// 	await db.delete(Category).where(eq(Category.id, id));
-	// }
-
-	catDelBtn.forEach((cat) =>
-		cat.addEventListener("click", () => {
-			if (cat.parentElement?.parentElement) {
-				cat.parentElement.parentElement.classList.toggle("hidden");
-			}
-			// deleteCategory(cat.dataset.id as string);
-		})
+	// Delete functionality
+	catDelBtn.forEach((btn) =>
+		btn.addEventListener("click", () => categoryDelete(btn))
 	);
+
+	// Functions
+	function toggleActionsMenu(btn: HTMLAnchorElement) {
+		btn.nextElementSibling?.classList.toggle("hidden");
+	}
+
+	async function categoryDelete(btn: HTMLAnchorElement) {
+		await db.delete(Category).where(eq(Category.id, btn.dataset.id as string));
+
+		btn.parentElement?.parentElement?.classList.toggle("hidden");
+	}
 </script>

@@ -58,9 +58,7 @@ if (Astro.request.method === "POST") {
 
 			const hasErrors = Object.values(errors).some((msg) => msg);
 			if (!hasErrors) {
-				await db
-					.insert(Category)
-					.values({ name, description, imagePath: `/src/assets/${imagePath}` });
+				await db.insert(Category).values({ name, description, imagePath });
 
 				return Astro.redirect("/admin/categorias");
 			}

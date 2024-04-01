@@ -11,19 +11,19 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.5.10",
-    "@astrojs/db": "^0.9.4",
+    "@astrojs/db": "^0.9.8",
     "@astrojs/tailwind": "^5.1.0",
-    "@astrojs/vercel": "^7.4.0",
-    "astro": "^4.5.9",
+    "@astrojs/vercel": "^7.5.0",
+    "astro": "^4.5.12",
     "astro-icon": "^1.1.0",
     "tailwind-merge": "^2.2.2",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^3.4.3",
     "typescript": "^5.4.3",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.1.178",
     "clsx": "^2.1.0",
-    "daisyui": "^4.7.3"
+    "daisyui": "^4.9.0"
   }
 }
