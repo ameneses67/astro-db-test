@@ -1,6 +1,7 @@
 ---
 // Astro db
-import { db, Category } from "astro:db";
+// import { db, Category } from "astro:db";
+import { GET } from "./api/categorias/index.json";
 
 // Layouts
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -10,7 +11,16 @@ import CategoryCard from "@components/category/CategoryCard.astro";
 import Section from "@ui/Section.astro";
 
 // Data
-const categories = await db.select().from(Category);
+// const categories = await db.select().from(Category);
+type CategoryType = {
+	id: string;
+	name: string;
+	description: string;
+	imagePath: string;
+};
+
+const response = await GET(Astro);
+const categories: CategoryType[] = await response.json();
 
 // Head metadata
 const title = "Categrías";

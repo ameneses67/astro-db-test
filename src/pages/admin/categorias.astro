@@ -1,6 +1,7 @@
 ---
 // Astro db
-import { db, Category } from "astro:db";
+// import { db, Category } from "astro:db";
+import { GET } from "../api/categorias/index.json";
 
 // Astro tools
 import { Icon } from "astro-icon/components";
@@ -15,7 +16,17 @@ import Button from "@ui/Button.astro";
 import { getFormattedDate } from "@libs/utils";
 
 // Data
-const categories = await db.select().from(Category);
+// const categories = await db.select().from(Category);
+type CategoryType = {
+	id: string;
+	name: string;
+	description: string;
+	imagePath: string;
+	published: Date;
+};
+
+const response = await GET(Astro);
+const categories: CategoryType[] = await response.json();
 
 // Head metadata
 const title = "Categorías";
@@ -116,7 +127,7 @@ const description = "Listado de categorías";
 </BaseLayout>
 
 <script>
-	import { db, eq, Category } from "astro:db";
+	// import { db, eq, Category } from "astro:db";
 
 	// Selectors
 	const actionsBtn = document.querySelectorAll(
@@ -143,8 +154,14 @@ const description = "Listado de categorías";
 	}
 
 	async function categoryDelete(btn: HTMLAnchorElement) {
-		await db.delete(Category).where(eq(Category.id, btn.dataset.id as string));
-
+		// await db.delete(Category).where(eq(Category.id, btn.dataset.id as string));
 		btn.parentElement?.parentElement?.classList.toggle("hidden");
+
+		return await fetch(`/api/categorias/${btn.dataset.id}.json`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 	}
 </script>
