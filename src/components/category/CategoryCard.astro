@@ -10,15 +10,14 @@ import { slugify } from "@libs/utils";
 
 // Components
 import Heading from "@ui/Heading.astro";
+import type { CategoryType } from "src/env";
 
 interface Props {
-	id: string;
-	name: string;
-	description: string;
-	imagePath: string;
+	category: CategoryType;
 }
 
-const { id, name, description, imagePath } = Astro.props;
+const { category } = Astro.props;
+const { id, name, description, imagePath } = category;
 
 const images = import.meta.glob<{ default: ImageMetadata }>(
 	"/src/assets/*.{jpeg,jpg,png,gif}"

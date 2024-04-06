@@ -1,9 +1,8 @@
 import { column, defineDb, defineTable, NOW } from "astro:db";
-import { uniqueId } from "../src/libs/utils";
 
 const Category = defineTable({
 	columns: {
-		id: column.text({ primaryKey: true, unique: true, default: uniqueId() }),
+		id: column.number({ primaryKey: true }),
 		name: column.text({ unique: true }),
 		description: column.text(),
 		imagePath: column.text(),
@@ -13,24 +12,25 @@ const Category = defineTable({
 
 const Subcategory = defineTable({
 	columns: {
-		id: column.text({ primaryKey: true, unique: true, default: uniqueId() }),
+		id: column.number({ primaryKey: true }),
 		name: column.text({ unique: true }),
 		description: column.text(),
 		imagePath: column.text(),
-		categoryId: column.text({ references: () => Category.columns.id }),
+		categoryId: column.number({ references: () => Category.columns.id }),
+		published: column.date({ default: NOW }),
 	},
 });
 
 const Brand = defineTable({
 	columns: {
-		id: column.number({ primaryKey: true, unique: true }),
+		id: column.number({ primaryKey: true }),
 		name: column.text(),
 	},
 });
 
 const Size = defineTable({
 	columns: {
-		id: column.number({ primaryKey: true, unique: true }),
+		id: column.number({ primaryKey: true }),
 		code: column.text(),
 		description: column.text(),
 	},
@@ -38,7 +38,7 @@ const Size = defineTable({
 
 const Color = defineTable({
 	columns: {
-		id: column.number({ primaryKey: true, unique: true }),
+		id: column.number({ primaryKey: true }),
 		code: column.text(),
 		description: column.text(),
 	},
@@ -46,15 +46,15 @@ const Color = defineTable({
 
 const Product = defineTable({
 	columns: {
-		id: column.text({ primaryKey: true, unique: true, default: uniqueId() }),
+		id: column.number({ primaryKey: true }),
 		name: column.text(),
 		description: column.text(),
 		brandId: column.number({
 			references: () => Brand.columns.id,
 			optional: true,
 		}),
-		categoryId: column.text({ references: () => Category.columns.id }),
-		subcategoryId: column.text({ references: () => Subcategory.columns.id }),
+		categoryId: column.number({ references: () => Category.columns.id }),
+		subcategoryId: column.number({ references: () => Subcategory.columns.id }),
 		price: column.number(),
 		sizeId: column.number({
 			references: () => Size.columns.id,

@@ -1,0 +1,118 @@
+---
+// Astro tools
+import { Icon } from "astro-icon/components";
+
+// Types
+import type { CategoryType } from "src/pages/admin/categorias.astro";
+
+//Data
+import { GET } from "../../pages/api/categorias/index.json";
+
+let response = await GET(Astro);
+const categories: CategoryType[] = await response.json();
+
+// Errors
+import { errors } from "src/pages/admin/nueva-subcategoria.astro";
+---
+
+<form
+	id="new-subcategory-form"
+	method="POST"
+>
+	<div class="flex flex-col md:flex-row items-start gap-4">
+		<div class="space-y-2 w-full max-w-xs">
+			<input
+				name="name"
+				type="text"
+				placeholder="Subategoría"
+				class="input input-bordered w-full"
+			/>
+			{
+				errors.name && (
+					<p class="flex items-start gap-2 text-error text-sm">{errors.name}</p>
+				)
+			}
+		</div>
+		<div class="space-y-2 w-full max-w-xs">
+			<textarea
+				name="description"
+				class="textarea textarea-bordered w-full"
+				placeholder="Descripción"
+				rows="1"
+			></textarea>
+			{
+				errors.description && (
+					<p class="flex items-center gap-2 text-error text-sm">
+						{errors.description}
+					</p>
+				)
+			}
+		</div>
+		<div class="space-y-2 w-full max-w-xs">
+			<input
+				name="imagePath"
+				type="text"
+				placeholder="p.ej., imagen.jpg"
+				class="input input-bordered w-full"
+			/>
+			{
+				errors.imagePath && (
+					<p class="flex items-center gap-2 text-error text-sm">
+						{errors.imagePath}
+					</p>
+				)
+			}
+		</div>
+		<div class="space-y-2 w-full max-w-xs">
+			<select
+				name="categoryId"
+				class="select select-bordered w-full"
+			>
+				<option
+					disabled
+					selected
+					>Selecciona una categoría</option
+				>
+				{
+					categories.map((cat) => (
+						<option
+							value={cat.id}
+							class="capitalize"
+						>
+							{cat.name}
+						</option>
+					))
+				}
+			</select>
+			{
+				errors.categoryId && (
+					<p class="flex items-center gap-2 text-error text-sm">
+						{errors.categoryId}
+					</p>
+				)
+			}
+		</div>
+	</div>
+	<button
+		type="submit"
+		class="btn btn-accent mt-4 px-6"
+		>Crear</button
+	>
+</form>
+
+<script>
+	// const newSubcatForm = document.querySelector("#new-subcategory-form");
+
+	// newSubcatForm?.addEventListener("submit", (e) => submitFormData(e));
+
+	// const submitFormData = async (e: Event) => {
+	// 	e.preventDefault();
+	// 	const formData = new FormData(e.target as HTMLFormElement);
+	// 	const response = await fetch("/api/subcategorias.json", {
+	// 		method: "POST",
+	// 		body: formData,
+	// 	});
+	// 	const data = await response.json();
+	// 	console.log(formData);
+	// };
+</script>

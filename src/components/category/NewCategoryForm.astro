@@ -6,7 +6,10 @@ import { Icon } from "astro-icon/components";
 import { errors } from "src/pages/admin/nueva-categoria.astro";
 ---
 
-<form method="POST">
+<form
+	id="new-category-form"
+	method="POST"
+>
 	<div class="flex flex-col md:flex-row items-start gap-4">
 		<div class="space-y-2 w-full max-w-xs">
 			<input
@@ -18,8 +21,7 @@ import { errors } from "src/pages/admin/nueva-categoria.astro";
 			{
 				errors.name && (
 					<p class="flex items-center gap-2 text-error text-sm">
-						<Icon name="lucide:circle-x" />
-						<span>{errors.name}</span>
+						{errors.name}
 					</p>
 				)
 			}
@@ -34,8 +36,7 @@ import { errors } from "src/pages/admin/nueva-categoria.astro";
 			{
 				errors.description && (
 					<p class="flex items-center gap-2 text-error text-sm">
-						<Icon name="lucide:circle-x" />
-						<span>{errors.description}</span>
+						{errors.description}
 					</p>
 				)
 			}
@@ -50,8 +51,7 @@ import { errors } from "src/pages/admin/nueva-categoria.astro";
 			{
 				errors.imagePath && (
 					<p class="flex items-center gap-2 text-error text-sm">
-						<Icon name="lucide:circle-x" />
-						<span>{errors.imagePath}</span>
+						{errors.imagePath}
 					</p>
 				)
 			}

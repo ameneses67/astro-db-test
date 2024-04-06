@@ -2,8 +2,8 @@
 // Render mode
 export const prerender = false;
 
-// Astro db
-import { db, eq, Category } from "astro:db";
+// Astro api
+import { GET } from "../api/categorias/index.json";
 
 // Ulilities
 import { imageFileValidation } from "@libs/utils";
@@ -15,12 +15,12 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import Heading from "@components/ui/Heading.astro";
 import Section from "@ui/Section.astro";
 import NewCategoryForm from "@components/category/NewCategoryForm.astro";
+import type { CategoryType } from "src/env";
 
-const categoryRegistered = async (category: string) => {
-	const catReg = await db
-		.select()
-		.from(Category)
-		.where(eq(Category.name, category));
+const categoryRegistered = async (catName: string) => {
+	const response = await GET(Astro);
+	const categories: CategoryType[] = await response.json();
+	const catReg = categories.filter((cat) => cat.name === catName.toLowerCase());
 
 	return catReg.length > 0 ? true : false;
 };
@@ -30,45 +30,46 @@ export const errors = { name: "", description: "", imagePath: "" };
 if (Astro.request.method === "POST") {
 	try {
 		const formData = await Astro.request.formData();
-		const name = (formData.get("name") as string).toLowerCase();
-		const description = formData.get("description") as string;
-		const imagePath = (formData.get("imagePath") as string).toLowerCase();
+		const name = formData.get("name");
+		const description = formData.get("description");
+		const imagePath = formData.get("imagePath");
+
+		if (typeof name !== "string" || name.length < 1) {
+			errors.name += "Ingresa el nombre de la categoría";
+		} else if (await categoryRegistered(name)) {
+			errors.name += "Esta categoría ya existe";
+		}
+
+		if (typeof description !== "string" || description.length < 1) {
+			errors.description += "Ingresa la descripción de la categoría";
+		}
 
 		if (
-			typeof name === "string" &&
-			typeof description === "string" &&
-			typeof imagePath === "string"
+			typeof imagePath !== "string" ||
+			imagePath.length < 1 ||
+			imageFileValidation(imagePath) === false
 		) {
-			if (name.length < 1) {
-				errors.name += "Ingresa el nombre de la categoría";
-			} else if (await categoryRegistered(name)) {
-				errors.name += "Esta categoría ya existe";
-			}
-
-			if (description.length < 1) {
-				errors.description += "Ingresa la descripción de la categoría";
-			}
-
-			if (
-				imagePath.length < 1 ||
-				imageFileValidation(imagePath as string) === false
-			) {
-				errors.imagePath += "El formato de la imagen es inválido";
-			}
-
-			const hasErrors = Object.values(errors).some((msg) => msg);
-			if (!hasErrors) {
-				await db.insert(Category).values({ name, description, imagePath });
-
-				return Astro.redirect("/admin/categorias");
-			}
-
-			setTimeout(() => {
-				errors.name = "";
-				errors.description = "";
-				errors.imagePath = "";
-			}, 3000);
+			errors.imagePath += "El formato de la imagen es inválido";
 		}
+
+		const hasErrors = Object.values(errors).some((msg) => msg);
+		if (!hasErrors) {
+			const response = await fetch(`${Astro.url.origin}/api/categorias.json`, {
+				method: "POST",
+				body: formData,
+			});
+
+			const data = await response.json();
+			console.log(data);
+
+			return Astro.redirect("/admin/categorias");
+		}
+
+		setTimeout(() => {
+			errors.name = "";
+			errors.description = "";
+			errors.imagePath = "";
+		}, 3000);
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error(error.message);

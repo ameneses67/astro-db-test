@@ -1,6 +1,5 @@
 ---
-// Astro db
-// import { db, Category } from "astro:db";
+// Astro tools
 import { GET } from "./api/categorias/index.json";
 
 // Layouts
@@ -9,22 +8,15 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 // Components
 import CategoryCard from "@components/category/CategoryCard.astro";
 import Section from "@ui/Section.astro";
+import type { CategoryType } from "src/env";
 
 // Data
-// const categories = await db.select().from(Category);
-type CategoryType = {
-	id: string;
-	name: string;
-	description: string;
-	imagePath: string;
-};
-
 const response = await GET(Astro);
 const categories: CategoryType[] = await response.json();
 
 // Head metadata
 const title = "Categrías";
-const description = "Categorías de Saris";
+const description = "Categorías del sitio";
 ---
 
 <BaseLayout
@@ -33,16 +25,7 @@ const description = "Categorías de Saris";
 >
 	<Section>
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-			{
-				categories.map((cat) => (
-					<CategoryCard
-						id={cat.id}
-						name={cat.name}
-						description={cat.description}
-						imagePath={cat.imagePath}
-					/>
-				))
-			}
+			{categories.map((cat) => <CategoryCard category={cat} />)}
 		</div>
 	</Section>
 </BaseLayout>

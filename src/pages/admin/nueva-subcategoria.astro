@@ -1,0 +1,112 @@
+---
+// Render mode
+export const prerender = false;
+
+// Astro db
+import { db, eq, Category } from "astro:db";
+import { GET } from "../api/subcategorias/index.json";
+
+// Ulilities
+import { imageFileValidation } from "@libs/utils";
+
+// Layouts
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+// Components
+import Heading from "@components/ui/Heading.astro";
+import Section from "@ui/Section.astro";
+import NewSubcategoryForm from "@components/category/NewSubcategoryForm.astro";
+import type { SubcategoryType } from "./subcategorias.astro";
+
+const subcategoryRegistered = async (subcategory: string) => {
+	// const catReg = await db
+	// 	.select()
+	// 	.from(Category)
+	// 	.where(eq(Category.name, category));
+
+	const response = await GET(Astro);
+	const subcat: SubcategoryType[] = await response.json();
+	const subcatReg = subcat.filter((sub) => (sub.name = subcategory));
+
+	return subcatReg.length > 0 ? true : false;
+};
+
+// Form submission
+export const errors = {
+	name: "",
+	description: "",
+	imagePath: "",
+	categoryId: "",
+};
+if (Astro.request.method === "POST") {
+	try {
+		const formData = await Astro.request.formData();
+		console.log(formData);
+		const name = (formData.get("name") as string).toLowerCase();
+		const description = formData.get("description") as string;
+		const imagePath = (formData.get("imagePath") as string).toLowerCase();
+		const categoryId = formData.get("categoryId") as string;
+
+		if (name.length < 1) {
+			errors.name += "Ingresa el nombre de la subcategoría";
+		} else if (await subcategoryRegistered(name)) {
+			errors.name += "Esta categoría ya existe";
+		}
+
+		if (description.length < 1) {
+			errors.description += "Ingresa la descripción de la subcategoría";
+		}
+
+		if (
+			imagePath.length < 1 ||
+			imageFileValidation(imagePath as string) === false
+		) {
+			errors.imagePath += "El formato de la imagen es inválido";
+		}
+
+		if (!categoryId) {
+			errors.categoryId += "Selecciona una categoría";
+		}
+
+		const hasErrors = Object.values(errors).some((msg) => msg);
+		if (!hasErrors) {
+			const reponse = await fetch("/api/subcategorias.json", {
+				method: "POST",
+				body: formData,
+			});
+
+			return Astro.redirect("/admin/subcategorias");
+		}
+
+		setTimeout(() => {
+			errors.name = "";
+			errors.description = "";
+			errors.imagePath = "";
+		}, 3000);
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error(error.message);
+		}
+	}
+}
+
+// Head metadata
+const title = "Nueva subcategoría";
+const description = "Crear nueva subcategoría";
+---
+
+<BaseLayout
+	{title}
+	{description}
+>
+	<Section>
+		<Heading
+			tagName="h1"
+			size="h1"
+			title="Crear subcategoría"
+		>
+			Añade una nueva subcategoría
+		</Heading>
+		<NewSubcategoryForm />
+	</Section>
+</BaseLayout>
