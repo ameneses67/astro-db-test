@@ -16,6 +16,7 @@ import Heading from "@components/ui/Heading.astro";
 import Section from "@ui/Section.astro";
 import NewCategoryForm from "@components/category/NewCategoryForm.astro";
 import type { CategoryType } from "src/env";
+import CategoryForm from "@components/category/CategoryForm";
 
 const categoryRegistered = async (catName: string) => {
 	const response = await GET(Astro);
@@ -94,6 +95,7 @@ const description = "Crear nueva categoría";
 		>
 			Añade una nueva categoría
 		</Heading>
-		<NewCategoryForm />
+		<!-- <NewCategoryForm /> -->
+		<CategoryForm client:load />
 	</Section>
 </BaseLayout>
