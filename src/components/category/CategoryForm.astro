@@ -1,0 +1,91 @@
+---
+import { createForm } from "simple:form";
+import { z } from "zod";
+import sanitizeHtml from "sanitize-html";
+
+const NewCatForm = createForm({
+	name: z
+		.string()
+		.min(1, { message: "El nombre de la categoría es obligatorio" })
+		.toLowerCase()
+		.transform((dirty) => sanitizeHtml(dirty)),
+	description: z
+		.string()
+		.min(1, { message: "La descripción de la categoría es obligatoria" })
+		.transform((dirty) => sanitizeHtml(dirty)),
+	imagePath: z
+		.string()
+		.regex(
+			/[^\s]+(.*?).(jpg|jpeg|png|gif|webp|avif|JPG|JPEG|PNG|GIF|WEBP|AVIF)$/,
+			{ message: "Formatos válidos: jpg, png, gif, webp, avif" }
+		)
+		.transform((dirty) => sanitizeHtml(dirty)),
+});
+
+const result = await Astro.locals.form.getData(NewCatForm);
+
+if (result?.data) {
+	console.log(result.data);
+
+	try {
+		const response = await fetch(`${Astro.url.origin}/api/categorias.json`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(result.data),
+		});
+
+		const category = await response.json();
+		console.log(category);
+	} catch (error) {
+		console.error(error);
+	}
+}
+---
+
+<form method="POST">
+	<div class="flex flex-col md:flex-row items-start gap-4">
+		<div class="space-y-2 w-full max-w-xs">
+			<input
+				{...NewCatForm.inputProps.name}
+				placeholder="Categoría"
+				class="input input-bordered w-full"
+			/>
+			{
+				result?.fieldErrors?.name?.map((error) => (
+					<p class="text-error text-sm">{error}</p>
+				))
+			}
+		</div>
+		<div class="space-y-2 w-full max-w-xs">
+			<input
+				{...NewCatForm.inputProps.description}
+				placeholder="Descripción"
+				class="input input-bordered w-full"
+			/>
+			{
+				result?.fieldErrors?.description?.map((error) => (
+					<p class="text-error text-sm">{error}</p>
+				))
+			}
+		</div>
+		<div class="space-y-2 w-full max-w-xs">
+			<input
+				{...NewCatForm.inputProps.imagePath}
+				placeholder="p.ej., imagen.jpg"
+				class="input input-bordered w-full"
+			/>
+			{
+				result?.fieldErrors?.imagePath?.map((error) => (
+					<p class="text-error text-sm">{error}</p>
+				))
+			}
+		</div>
+	</div>
+	<button
+		type="submit"
+		class="btn btn-accent mt-4 px-6"
+		>Crear</button
+	>
+</form>

@@ -3,24 +3,21 @@ import type { APIRoute } from "astro";
 import { db, eq, Category } from "astro:db";
 
 export const GET: APIRoute = async ({ params }) => {
-	const id = params.id;
-	console.log(id);
-	const category = await db
-		.select()
-		.from(Category)
-		.where(eq(Category.id, id as string));
+	const id = Number(params.id);
+
+	const category = await db.select().from(Category).where(eq(Category.id, id));
 
 	if (!category) {
 		return new Response(null, {
 			status: 404,
-			statusText: "Category not found",
+			statusText: "No se encontró la categoría.",
 		});
 	}
 
 	return new Response(JSON.stringify(category), {
 		status: 200,
 		headers: {
-			"Content-Type": "application/json",
+			"Content-Type": "application/json; charset=utf-8",
 		},
 	});
 };
@@ -31,13 +28,14 @@ export const DELETE: APIRoute = async ({ params }) => {
 	if (!id) {
 		return new Response(null, {
 			status: 404,
-			statusText: "No id provided",
+			statusText: "No se proporcionó ningún id.",
 		});
 	}
 
-	await db.delete(Category).where(eq(Category.id, id));
+	await db.delete(Category).where(eq(Category.id, Number(id)));
 
 	return new Response(null, {
 		status: 204,
+		statusText: "Categoría borrada exitosamente.",
 	});
 };

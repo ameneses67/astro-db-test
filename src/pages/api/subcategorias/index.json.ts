@@ -1,5 +1,6 @@
 export const prerender = false;
 
+import { imageFileValidation } from "@libs/utils";
 import type { APIRoute } from "astro";
 import { Category, db, eq, Subcategory } from "astro:db";
 
@@ -19,7 +20,7 @@ export const GET: APIRoute = async () => {
 	return new Response(JSON.stringify(subcategories), {
 		status: 200,
 		headers: {
-			"Content-Type": "application/json",
+			"Content-Type": "application/json; charset=utf-8",
 		},
 	});
 };
@@ -27,34 +28,66 @@ export const GET: APIRoute = async () => {
 export const POST: APIRoute = async ({ request }) => {
 	const data = await request.formData();
 	console.log("Desde api" + Object.fromEntries(data));
-	const name = (data.get("name") as string).toLowerCase();
+	const name = data.get("name");
 	const description = data.get("description");
 	const imagePath = data.get("imagePath");
 	const categoryId = data.get("categoryId");
 
-	if (!name || !description || !imagePath || !categoryId) {
+	if (typeof name !== "string" || !name) {
 		return new Response(
 			JSON.stringify({
-				message: "All fields are required",
+				message: "El nombre de la subcatgoería es requerido.",
 			}),
-			{ status: 400 }
+			{
+				status: 400,
+			}
+		);
+	}
+
+	if (typeof description !== "string" || !description) {
+		return new Response(
+			JSON.stringify({
+				message: "La descripción de la subcategoría es requerido.",
+			}),
+			{
+				status: 400,
+			}
 		);
 	}
 
 	if (
-		typeof name === "string" &&
-		typeof description === "string" &&
-		typeof imagePath === "string" &&
-		typeof categoryId === "string"
+		typeof imagePath !== "string" ||
+		!imagePath ||
+		!imageFileValidation(imagePath)
 	) {
-		await db
-			.insert(Subcategory)
-			.values({ name, description, imagePath, categoryId });
+		return new Response(
+			JSON.stringify({
+				message: "El formato de la imagen es inválido.",
+			}),
+			{
+				status: 400,
+			}
+		);
 	}
+
+	if (typeof categoryId !== "number" || !categoryId) {
+		return new Response(
+			JSON.stringify({
+				message: "El id de la categoría es requerido.",
+			}),
+			{
+				status: 400,
+			}
+		);
+	}
+
+	await db
+		.insert(Subcategory)
+		.values({ name: name.toLowerCase(), description, imagePath, categoryId });
 
 	return new Response(
 		JSON.stringify({
-			message: "Success!",
+			message: "¡Subcategoría creada exitosamente!",
 		}),
 		{ status: 200 }
 	);

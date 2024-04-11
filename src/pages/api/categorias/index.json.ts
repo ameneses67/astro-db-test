@@ -21,21 +21,23 @@ export const GET: APIRoute = async () => {
 	return new Response(JSON.stringify(categories), {
 		status: 200,
 		headers: {
-			"Content-Type": "application/json",
+			"Content-Type": "application/json; charset=utf-8",
 		},
 	});
 };
 
 export const POST: APIRoute = async ({ request }) => {
-	const newCatData = await request.formData();
-	const name = newCatData.get("name");
-	const description = newCatData.get("description");
-	const imagePath = newCatData.get("imagePath");
+	// const newCatData = await request.formData();
+	const body = await request.json();
+	const { name, description, imagePath } = body;
+	// const name = newCatData.get("name");
+	// const description = newCatData.get("description");
+	// const imagePath = newCatData.get("imagePath");
 
 	if (typeof name !== "string" || !name) {
 		return new Response(
 			JSON.stringify({
-				message: "El nombre de categoría es requerido.",
+				message: "El nombre de la categoría es requerido.",
 			}),
 			{ status: 400 }
 		);
@@ -57,7 +59,7 @@ export const POST: APIRoute = async ({ request }) => {
 	) {
 		return new Response(
 			JSON.stringify({
-				message: "El formate del archivo de imagen no es válido.",
+				message: "El formato del archivo de imagen no es válido.",
 			}),
 			{ status: 400 }
 		);
@@ -69,6 +71,11 @@ export const POST: APIRoute = async ({ request }) => {
 		JSON.stringify({
 			message: "¡Categoría creada exitosamente!",
 		}),
-		{ status: 200 }
+		{
+			status: 200,
+			headers: {
+				"Content-Type": "application/json; charset=utf-8",
+			},
+		}
 	);
 };
