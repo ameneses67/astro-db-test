@@ -18,46 +18,46 @@ import BillboardHeader from "@components/billboard/BillboardHeader.astro";
 
 // Routes
 export const getStaticPaths = (async () => {
-  const subcategories = await db
-    .select()
-    .from(Subcategory)
-    .innerJoin(Category, eq(Subcategory.categoryId, Category.id));
+	const subcategories = await db
+		.select()
+		.from(Subcategory)
+		.innerJoin(Category, eq(Subcategory.categoryId, Category.id));
 
-  return subcategories.map((subcategory) => ({
-    params: {
-      // categories: slugify(subcategory.Category.name),
-      subcategories: `${slugify(subcategory.Category.name)}/${slugify(subcategory.Subcategory.name)}/`,
-    },
-    props: { subcategory },
-  }));
+	return subcategories.map((subcategory) => ({
+		params: {
+			subcategories: `${slugify(subcategory.Category.name)}/${slugify(subcategory.Subcategory.name)}/`,
+		},
+		props: { subcategory },
+	}));
 }) satisfies GetStaticPaths;
-console.log(getStaticPaths);
 
 const { subcategories } = Astro.params;
-console.log(subcategories);
 const { subcategory } = Astro.props;
 
 // Data
 const products = await db
-  .select()
-  .from(Product)
-  .leftJoin(Brand, eq(Product.brandId, Brand.id))
-  .leftJoin(Size, eq(Product.sizeId, Size.id))
-  .where(eq(Product.subcategoryId, subcategory.Subcategory.id));
+	.select()
+	.from(Product)
+	.leftJoin(Brand, eq(Product.brandId, Brand.id))
+	.leftJoin(Size, eq(Product.sizeId, Size.id))
+	.where(eq(Product.subcategoryId, subcategory.Subcategory.id));
 
 // Head metadata
 const title = subcategory.Subcategory.name;
 const description = subcategory.Subcategory.name;
 ---
 
-<BaseLayout {title} {description}>
-  <Section>
-    <BillboardHeader
-      id={subcategory.Subcategory.id}
-      name={subcategory.Subcategory.name}
-      description={subcategory.Subcategory.description}
-      imagePath={subcategory.Subcategory.imagePath}
-    />
-    <BillboardBody productData={products} />
-  </Section>
+<BaseLayout
+	{title}
+	{description}
+>
+	<Section>
+		<BillboardHeader
+			id={subcategory.Subcategory.id}
+			name={subcategory.Subcategory.name}
+			description={subcategory.Subcategory.description}
+			imagePath={subcategory.Subcategory.imagePath}
+		/>
+		<BillboardBody productData={products} />
+	</Section>
 </BaseLayout>

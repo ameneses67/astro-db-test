@@ -1,31 +1,36 @@
 ---
-// Astro db
-import { GET } from "../api/categorias/index.json";
+// Render mode
+export const prerender = false
+
+// Astro api
+import { GET } from '../api/categorias/index.json'
+import { db, Category } from 'astro:db'
 
 // Astro tools
-import { Icon } from "astro-icon/components";
+import { Icon } from 'astro-icon/components'
 
 // Types
-import type { CategoryType } from "src/env";
+import type { CategoryType } from 'src/env'
 
 // Utilities
-import { getFormattedDate } from "@libs/utils";
+import { getFormattedDate } from '@libs/utils'
 
 // Layouts
-import BaseLayout from "@layouts/BaseLayout.astro";
+import BaseLayout from '@layouts/BaseLayout.astro'
 
 // Components
-import Heading from "@components/ui/Heading.astro";
-import Section from "@ui/Section.astro";
-import Button from "@ui/Button.astro";
+import Heading from '@components/ui/Heading.astro'
+import Section from '@ui/Section.astro'
+import Button from '@ui/Button.astro'
 
 // Data
-const response = await GET(Astro);
-const categories: CategoryType[] = await response.json();
+// const response = await GET(Astro)
+// const categories: CategoryType[] = await response.json()
+const categories = await db.select().from(Category)
 
 // Head metadata
-const title = "Categorías";
-const description = "Listado de categorías";
+const title = 'Categorías'
+const description = 'Listado de categorías'
 ---
 
 <BaseLayout
@@ -33,7 +38,7 @@ const description = "Listado de categorías";
 	{description}
 >
 	<Section>
-		<div class="flex justify-between items-center">
+		<div class="flex items-center justify-between">
 			<Heading
 				tagName="h1"
 				size="h1"
@@ -53,7 +58,7 @@ const description = "Listado de categorías";
 				Crear nueva
 			</Button>
 		</div>
-		<div class="overflow-x-auto">
+		<div>
 			<table class="table table-zebra">
 				<!-- head -->
 				<thead>
@@ -66,7 +71,7 @@ const description = "Listado de categorías";
 					</tr>
 				</thead>
 				<tbody>
-					<!-- row 1 -->
+					<!-- rows -->
 					{
 						categories.map((category) => (
 							<tr>
@@ -85,7 +90,7 @@ const description = "Listado de categorías";
 									>
 										<Icon name="lucide:ellipsis-vertical" />
 									</Button>
-									<ul class="menu bg-base-300 rounded-box max-w-fit absolute right-4 top-full z-10 hidden">
+									<ul class="menu absolute right-4 top-full z-10 hidden max-w-fit rounded-box bg-base-300">
 										<li>
 											<a
 												class="cat-edit"
@@ -122,41 +127,61 @@ const description = "Listado de categorías";
 </BaseLayout>
 
 <script>
-	// import { db, eq, Category } from "astro:db";
+	import { db, eq, Category } from 'astro:db'
 
 	// Selectors
-	const actionsBtn = document.querySelectorAll(
-		".actions-btn"
-	) as NodeListOf<HTMLAnchorElement>;
+	const actionsBtn = document.querySelectorAll('.actions-btn') as NodeListOf<HTMLAnchorElement>
 
-	const catDelBtn = document.querySelectorAll(
-		".cat-del"
-	) as NodeListOf<HTMLAnchorElement>;
+	const catDelBtn = document.querySelectorAll('.cat-del') as NodeListOf<HTMLAnchorElement>
 
 	// Show actions menu
-	actionsBtn.forEach((btn) =>
-		btn.addEventListener("click", () => toggleActionsMenu(btn))
-	);
+	actionsBtn.forEach((btn) => btn.addEventListener('click', () => toggleActionsMenu(btn)))
 
 	// Delete functionality
-	catDelBtn.forEach((btn) =>
-		btn.addEventListener("click", () => categoryDelete(btn))
-	);
+	catDelBtn.forEach((btn) => btn.addEventListener('click', () => categoryDelete(btn)))
 
 	// Functions
 	function toggleActionsMenu(btn: HTMLAnchorElement) {
-		btn.nextElementSibling?.classList.toggle("hidden");
+		btn.nextElementSibling?.classList.toggle('hidden')
 	}
 
 	async function categoryDelete(btn: HTMLAnchorElement) {
-		// await db.delete(Category).where(eq(Category.id, btn.dataset.id as string));
-		btn.parentElement?.parentElement?.classList.toggle("hidden");
+		btn.parentElement?.parentElement?.classList.toggle('hidden')
 
-		return await fetch(`/api/categorias/${btn.dataset.id}.json`, {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
+		if (btn.dataset.id !== undefined) {
+			const delCatId = parseInt(btn.dataset.id)
+
+			await db.delete(Category).where(eq(Category.id, delCatId))
+		}
+
+		// try {
+		// 	const res = await fetch(`/api/categorias/${btn.dataset.id}.json`, {
+		// 		method: 'DELETE',
+		// 		headers: {
+		// 			'Content-Type': 'application/json'
+		// 		}
+		// 	})
+
+		// 	if (!res.ok) {
+		// 		throw new Error('No se pudo borrar la categoría')
+		// 	}
+
+		// 	const resData = res.json()
+		// 	console.log(resData)
+
+		// 	btn.closest('tr')?.remove()
+
+		// 	return new Response(
+		// 		JSON.stringify({
+		// 			message: 'Categoría borrada exitosamente'
+		// 		}),
+		// 		{
+		// 			status: 204,
+		// 			statusText: 'Categoría borrada'
+		// 		}
+		// 	)
+		// } catch (error) {
+		// 	console.error(error)
+		// }
 	}
 </script>

@@ -1,18 +1,66 @@
 ---
 // Render mode
-export const prerender = false;
+export const prerender = false
+
+// Tools
+import { z } from 'zod'
 
 // Layouts
-import BaseLayout from "@layouts/BaseLayout.astro";
+import BaseLayout from '@layouts/BaseLayout.astro'
 
 // Components
-import Heading from "@components/ui/Heading.astro";
-import Section from "@ui/Section.astro";
-import CategoryForm from "@components/category/CategoryForm";
+import Heading from '@components/ui/Heading.astro'
+import Section from '@ui/Section.astro'
+import CategoryForm from '@components/category/CategoryForm'
+import NewCategoryForm from '@components/category/NewCategoryForm.astro'
+import { categorySchema } from 'src/schemas/categoryForm'
+import { db } from 'astro:db'
+import { Category } from 'astro:db'
+import { eq } from 'astro:db'
+
+// Form submission
+export const errors = { name: '', description: '', imagePath: '' }
+if (Astro.request.method === 'POST') {
+	try {
+		errors.name = ''
+		errors.description = ''
+		errors.imagePath = ''
+
+		const formData = await Astro.request.formData()
+		const data = Object.fromEntries(formData) as z.infer<typeof categorySchema>
+
+		const regCat = await db
+			.select()
+			.from(Category)
+			.where(eq(Category.name, data.name.toLowerCase()))
+
+		if (regCat.length > 0) {
+			errors.name += 'Esta categoría ya existe'
+		}
+
+		const formVal = categorySchema.safeParse(data)
+
+		if (!formVal.success) {
+			formVal.error.issues.map((e) => (errors[e.path[0] as keyof typeof errors] += e.message))
+		} else {
+			await db.insert(Category).values(formVal.data)
+
+			return Astro.redirect('/admin/categorias')
+		}
+
+		// const hasErrors = Object.values(errors).some((msg) => msg)
+		// if (!hasErrors) {
+		// }
+	} catch (error) {
+		if (error instanceof Error) {
+			console.log(error.message)
+		}
+	}
+}
 
 // Head metadata
-const title = "Nueva categoría";
-const description = "Crear nueva categoría";
+const title = 'Nueva categoría'
+const description = 'Crear nueva categoría'
 ---
 
 <BaseLayout
@@ -27,6 +75,7 @@ const description = "Crear nueva categoría";
 		>
 			Añade una nueva categoría
 		</Heading>
-		<CategoryForm client:load />
+		<NewCategoryForm />
+		<!-- <CategoryForm client:load /> -->
 	</Section>
 </BaseLayout>

@@ -23,7 +23,7 @@ export const GET: APIRoute = async ({ params }) => {
 };
 
 export const DELETE: APIRoute = async ({ params }) => {
-	const id = params.id;
+	const id = Number(params.id);
 
 	if (!id) {
 		return new Response(null, {
@@ -32,10 +32,24 @@ export const DELETE: APIRoute = async ({ params }) => {
 		});
 	}
 
-	await db.delete(Category).where(eq(Category.id, Number(id)));
+	await db.delete(Category).where(eq(Category.id, id));
 
 	return new Response(null, {
 		status: 204,
 		statusText: "Categoría borrada exitosamente.",
 	});
+};
+
+export const PATCH: APIRoute = async ({ request, params }) => {
+	const id = Number(params.id);
+	const body = await request.json();
+
+	console.log(id);
+	console.log(body);
+
+	return new Response(
+		JSON.stringify({
+			message: "La categoría se ha actualizado con éxito.",
+		})
+	);
 };

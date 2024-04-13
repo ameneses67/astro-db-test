@@ -3,6 +3,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { categorySchema } from "src/schemas/categoryForm";
 import toast, { Toaster } from "react-hot-toast";
+import { useEffect } from "react";
 
 type FormFields = z.infer<typeof categorySchema>;
 
@@ -12,13 +13,39 @@ const CategoryForm = () => {
 		handleSubmit,
 		control,
 		setError,
+		reset,
 		formState: { errors, isSubmitting, isSubmitSuccessful },
 	} = useForm<FormFields>({
 		resolver: zodResolver(categorySchema),
 	});
 
+	useEffect(() => {
+		if (isSubmitSuccessful) {
+			reset();
+		}
+	}, [isSubmitSuccessful]);
+
 	const onSubmit: SubmitHandler<FormFields> = async (data) => {
-		console.log(data);
+		try {
+			const res = await fetch("/api/categorias.json", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+
+			if (!res.ok) {
+				throw new Error("Algo salió mal al crear la categoría");
+			}
+
+			const resData = await res.json();
+
+			toast.success(resData.message);
+		} catch (error) {
+			console.error(error);
+			toast.error("No se pudo crear la categoría");
+		}
 	};
 
 	return (
@@ -58,10 +85,6 @@ const CategoryForm = () => {
 						)}
 					</div>
 				</div>
-				{isSubmitSuccessful && toast.success("Categoría creada exitosamente")}
-				{errors.root && (
-					<p className="text-error text-sm">{errors.root.message}</p>
-				)}
 				<button
 					type="submit"
 					disabled={isSubmitting}

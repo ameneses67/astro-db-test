@@ -2,7 +2,7 @@
 export const prerender = false;
 
 // Astro db
-import { db, Category } from "astro:db";
+import { db, Category, eq } from "astro:db";
 
 // Astro api
 import type { APIRoute } from "astro";
@@ -27,19 +27,26 @@ export const GET: APIRoute = async () => {
 };
 
 export const POST: APIRoute = async ({ request }) => {
-	// const newCatData = await request.formData();
 	const body = await request.json();
 	const { name, description, imagePath } = body;
-	// const name = newCatData.get("name");
-	// const description = newCatData.get("description");
-	// const imagePath = newCatData.get("imagePath");
 
 	if (typeof name !== "string" || !name) {
+		throw new Error("El nombre de la categoría es requerido.");
+	}
+
+	const catExits = await db
+		.select()
+		.from(Category)
+		.where(eq(Category.name, name));
+
+	if (catExits.length > 0) {
 		return new Response(
 			JSON.stringify({
-				message: "El nombre de la categoría es requerido.",
+				message: "Esta categoría ya existe",
 			}),
-			{ status: 400 }
+			{
+				status: 200,
+			}
 		);
 	}
 
