@@ -27,7 +27,23 @@ if (Astro.request.method === 'POST') {
 		errors.imagePath = ''
 
 		const formData = await Astro.request.formData()
-		const data = Object.fromEntries(formData) as z.infer<typeof categorySchema>
+		const name = formData.get('name')
+		const description = formData.get('description')
+		const imagePath = (
+			formData.get('imagePath') as {
+				size: number
+				type: string
+				name: string
+				lastModified: number
+			}
+		).name
+
+		const data = {
+			name,
+			description,
+			imagePath
+		} as z.infer<typeof categorySchema>
+		console.log(data)
 
 		const regCat = await db
 			.select()
@@ -47,10 +63,6 @@ if (Astro.request.method === 'POST') {
 
 			return Astro.redirect('/admin/categorias')
 		}
-
-		// const hasErrors = Object.values(errors).some((msg) => msg)
-		// if (!hasErrors) {
-		// }
 	} catch (error) {
 		if (error instanceof Error) {
 			console.log(error.message)

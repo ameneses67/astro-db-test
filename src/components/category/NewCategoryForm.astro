@@ -1,29 +1,23 @@
 ---
 // Errors
-import { errors } from "src/pages/admin/nueva-categoria.astro";
+import { errors } from 'src/pages/admin/nueva-categoria.astro'
 ---
 
 <form
 	id="new-category-form"
 	method="POST"
 >
-	<div class="flex flex-col md:flex-row items-start gap-4">
-		<div class="space-y-2 w-full max-w-xs">
+	<div class="flex flex-col items-start gap-4 md:flex-row">
+		<div class="w-full max-w-xs space-y-2">
 			<input
 				name="name"
 				type="text"
 				placeholder="Categoría"
 				class="input input-bordered w-full"
 			/>
-			{
-				errors.name && (
-					<p class="flex items-center gap-2 text-error text-sm">
-						{errors.name}
-					</p>
-				)
-			}
+			{errors.name && <p class="flex items-center gap-2 text-sm text-error">{errors.name}</p>}
 		</div>
-		<div class="space-y-2 w-full max-w-xs">
+		<div class="w-full max-w-xs space-y-2">
 			<textarea
 				name="description"
 				class="textarea textarea-bordered w-full"
@@ -32,13 +26,23 @@ import { errors } from "src/pages/admin/nueva-categoria.astro";
 			></textarea>
 			{
 				errors.description && (
-					<p class="flex items-center gap-2 text-error text-sm">
-						{errors.description}
-					</p>
+					<p class="flex items-center gap-2 text-sm text-error">{errors.description}</p>
 				)
 			}
 		</div>
-		<div class="space-y-2 w-full max-w-xs">
+		<div class="w-full max-w-xs space-y-2">
+			<input
+				name="imagePath"
+				type="file"
+				class="file-input file-input-bordered w-full"
+			/>
+			{
+				errors.imagePath && (
+					<p class="flex items-center gap-2 text-sm text-error">{errors.imagePath}</p>
+				)
+			}
+		</div>
+		<!-- <div class="space-y-2 w-full max-w-xs">
 			<input
 				name="imagePath"
 				type="text"
@@ -52,7 +56,7 @@ import { errors } from "src/pages/admin/nueva-categoria.astro";
 					</p>
 				)
 			}
-		</div>
+		</div> -->
 	</div>
 	<button
 		type="submit"
