@@ -25,14 +25,14 @@ const joyeriaSub = await db
 	.where(eq(Subcategory.categoryId, 3));
 ---
 
-<footer class="footer p-10 bg-base-200 text-base-content">
+<footer class="footer bg-base-200 p-10 text-base-content">
 	<nav>
 		<h6 class="footer-title uppercase">{ropaSub[0].Category.name}</h6>
 		{
 			ropaSub.map((sub) => (
 				<a
 					href={`/${slugify(sub.Category.name)}/${slugify(sub.Subcategory.name)}/`}
-					class="link link-hover capitalize"
+					class="link-hover link capitalize"
 				>
 					{sub.Subcategory.name}
 				</a>
@@ -47,7 +47,7 @@ const joyeriaSub = await db
 			cuidadoPersonalSub.map((sub) => (
 				<a
 					href={`/${slugify(sub.Category.name)}/${slugify(sub.Subcategory.name)}/`}
-					class="link link-hover capitalize"
+					class="link-hover link capitalize"
 				>
 					{sub.Subcategory.name}
 				</a>
@@ -60,7 +60,7 @@ const joyeriaSub = await db
 			joyeriaSub.map((sub) => (
 				<a
 					href={`/${slugify(sub.Category.name)}/${slugify(sub.Subcategory.name)}/`}
-					class="link link-hover capitalize"
+					class="link-hover link capitalize"
 				>
 					{sub.Subcategory.name}
 				</a>
@@ -70,16 +70,21 @@ const joyeriaSub = await db
 	<form>
 		<h6 class="footer-title">Promociones</h6>
 		<fieldset class="form-control max-w-xs">
-			<label class="label">
+			<label
+				for="email"
+				class="label"
+			>
 				<span class="label-text"
 					>Déjanos tu correo y mantente actualizada con nuestra promociones</span
 				>
 			</label>
 			<div class="join">
 				<input
-					type="text"
+					id="email"
+					type="email"
+					name="email"
 					placeholder="nombre@correo.com"
-					class="input input-bordered join-item"
+					class="input join-item input-bordered"
 				/>
 				<button class="btn btn-accent join-item">Enviar</button>
 			</div>

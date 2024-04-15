@@ -1,36 +1,35 @@
 ---
 // Render mode
-export const prerender = false
+export const prerender = false;
 
 // Astro api
-import { GET } from '../api/categorias/index.json'
-import { db, Category } from 'astro:db'
+import { GET } from "../api/categorias/index.json";
+import { db, Category } from "astro:db";
 
 // Astro tools
-import { Icon } from 'astro-icon/components'
+import { Icon } from "astro-icon/components";
 
 // Types
-import type { CategoryType } from 'src/env'
+import type { CategoryType } from "src/env";
 
 // Utilities
-import { getFormattedDate } from '@libs/utils'
+import { getFormattedDate } from "@libs/utils";
 
 // Layouts
-import BaseLayout from '@layouts/BaseLayout.astro'
+import BaseLayout from "@layouts/BaseLayout.astro";
 
 // Components
-import Heading from '@components/ui/Heading.astro'
-import Section from '@ui/Section.astro'
-import Button from '@ui/Button.astro'
+import Heading from "@components/ui/Heading.astro";
+import Section from "@ui/Section.astro";
+import Button from "@ui/Button.astro";
+import DelActionButton from "@ui/DelActionButton";
 
 // Data
-// const response = await GET(Astro)
-// const categories: CategoryType[] = await response.json()
-const categories = await db.select().from(Category)
+const categories = await db.select().from(Category);
 
 // Head metadata
-const title = 'Categorías'
-const description = 'Listado de categorías'
+const title = "Categorías";
+const description = "Listado de categorías";
 ---
 
 <BaseLayout
@@ -82,7 +81,7 @@ const description = 'Listado de categorías'
 								<td>{category.description}</td>
 								<td>{category.imagePath}</td>
 								<td>{getFormattedDate(category.published)}</td>
-								<td class="relative max-w-fit">
+								<td class="relative">
 									<Button
 										color="primary"
 										style="ghost"
@@ -90,7 +89,7 @@ const description = 'Listado de categorías'
 									>
 										<Icon name="lucide:ellipsis-vertical" />
 									</Button>
-									<ul class="menu absolute right-4 top-full z-10 hidden max-w-fit rounded-box bg-base-300">
+									<ul class="menu absolute right-10 top-full z-10 hidden max-w-fit rounded-box bg-base-300">
 										<li>
 											<a
 												class="cat-edit"
@@ -104,16 +103,10 @@ const description = 'Listado de categorías'
 											</a>
 										</li>
 										<li>
-											<a
-												class="cat-del"
-												data-id={category.id}
-											>
-												<Icon
-													name="lucide:trash-2"
-													class="h-5 w-5"
-												/>
-												Borrar
-											</a>
+											<DelActionButton
+												client:load
+												id={category.id}
+											/>
 										</li>
 									</ul>
 								</td>
@@ -127,61 +120,11 @@ const description = 'Listado de categorías'
 </BaseLayout>
 
 <script>
-	import { db, eq, Category } from 'astro:db'
+	const actionsBtn = document.querySelectorAll(".actions-btn") as NodeListOf<HTMLAnchorElement>;
 
-	// Selectors
-	const actionsBtn = document.querySelectorAll('.actions-btn') as NodeListOf<HTMLAnchorElement>
+	actionsBtn.forEach((btn) => btn.addEventListener("click", () => toggleActionsMenu(btn)));
 
-	const catDelBtn = document.querySelectorAll('.cat-del') as NodeListOf<HTMLAnchorElement>
-
-	// Show actions menu
-	actionsBtn.forEach((btn) => btn.addEventListener('click', () => toggleActionsMenu(btn)))
-
-	// Delete functionality
-	catDelBtn.forEach((btn) => btn.addEventListener('click', () => categoryDelete(btn)))
-
-	// Functions
 	function toggleActionsMenu(btn: HTMLAnchorElement) {
-		btn.nextElementSibling?.classList.toggle('hidden')
-	}
-
-	async function categoryDelete(btn: HTMLAnchorElement) {
-		btn.parentElement?.parentElement?.classList.toggle('hidden')
-
-		if (btn.dataset.id !== undefined) {
-			const delCatId = parseInt(btn.dataset.id)
-
-			await db.delete(Category).where(eq(Category.id, delCatId))
-		}
-
-		// try {
-		// 	const res = await fetch(`/api/categorias/${btn.dataset.id}.json`, {
-		// 		method: 'DELETE',
-		// 		headers: {
-		// 			'Content-Type': 'application/json'
-		// 		}
-		// 	})
-
-		// 	if (!res.ok) {
-		// 		throw new Error('No se pudo borrar la categoría')
-		// 	}
-
-		// 	const resData = res.json()
-		// 	console.log(resData)
-
-		// 	btn.closest('tr')?.remove()
-
-		// 	return new Response(
-		// 		JSON.stringify({
-		// 			message: 'Categoría borrada exitosamente'
-		// 		}),
-		// 		{
-		// 			status: 204,
-		// 			statusText: 'Categoría borrada'
-		// 		}
-		// 	)
-		// } catch (error) {
-		// 	console.error(error)
-		// }
+		btn.nextElementSibling?.classList.toggle("hidden");
 	}
 </script>

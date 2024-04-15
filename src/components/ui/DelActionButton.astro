@@ -1,0 +1,50 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	category: { id: number };
+}
+
+const { category } = Astro.props;
+---
+
+<del-action-button
+	data-id={category.id}
+	class="flex items-center gap-2"
+>
+	<Icon
+		name="lucide:trash-2"
+		class="h-5 w-5"
+	/>
+	Borrar
+</del-action-button>
+
+<script>
+	import { db, eq, Category } from "astro:db";
+
+	class DelActionButton extends HTMLElement {
+		constructor() {
+			super();
+
+			const delBtn = document.querySelector("[data-id]") as HTMLElement;
+			console.log(delBtn);
+
+			delBtn?.addEventListener("click", () => {
+				console.log("Click delBtn");
+				categoryDelete();
+			});
+
+			const categoryDelete = async () => {
+				delBtn?.closest("ul")?.classList.toggle("hidden");
+
+				if (delBtn.dataset.id !== undefined) {
+					const delCatId = parseInt(delBtn.dataset.id);
+
+					await db.delete(Category).where(eq(Category.id, delCatId));
+				}
+			};
+		}
+	}
+
+	customElements.define("del-action-button", DelActionButton);
+</script>
