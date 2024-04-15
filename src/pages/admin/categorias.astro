@@ -22,7 +22,7 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import Heading from "@components/ui/Heading.astro";
 import Section from "@ui/Section.astro";
 import Button from "@ui/Button.astro";
-import DelActionButton from "@ui/DelActionButton";
+import DelActionButton from "@ui/DelActionButton.astro";
 
 // Data
 const categories = await db.select().from(Category);
@@ -32,28 +32,14 @@ const title = "Categorías";
 const description = "Listado de categorías";
 ---
 
-<BaseLayout
-	{title}
-	{description}
->
+<BaseLayout {title} {description}>
 	<Section>
 		<div class="flex items-center justify-between">
-			<Heading
-				tagName="h1"
-				size="h1"
-				title="Categorías"
-			>
+			<Heading tagName="h1" size="h1" title="Categorías">
 				Administra las categorías de tu tienda
 			</Heading>
-			<Button
-				href="/admin/nueva-categoria"
-				color="accent"
-				style="outline"
-			>
-				<Icon
-					name="lucide:circle-plus"
-					size={20}
-				/>
+			<Button href="/admin/nueva-categoria" color="accent" style="outline">
+				<Icon name="lucide:circle-plus" size={20} />
 				Crear nueva
 			</Button>
 		</div>
@@ -82,31 +68,18 @@ const description = "Listado de categorías";
 								<td>{category.imagePath}</td>
 								<td>{getFormattedDate(category.published)}</td>
 								<td class="relative">
-									<Button
-										color="primary"
-										style="ghost"
-										classes="actions-btn"
-									>
+									<Button color="primary" style="ghost" classes="actions-btn">
 										<Icon name="lucide:ellipsis-vertical" />
 									</Button>
 									<ul class="menu absolute right-10 top-full z-10 hidden max-w-fit rounded-box bg-base-300">
 										<li>
-											<a
-												class="cat-edit"
-												data-id={category.id}
-											>
-												<Icon
-													name="lucide:edit"
-													class="h-5 w-5"
-												/>
+											<a class="cat-edit" data-id={category.id}>
+												<Icon name="lucide:edit" class="h-5 w-5" />
 												Editar
 											</a>
 										</li>
 										<li>
-											<DelActionButton
-												client:load
-												id={category.id}
-											/>
+											<DelActionButton id={category.id} />
 										</li>
 									</ul>
 								</td>

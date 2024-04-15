@@ -2,20 +2,14 @@
 import { Icon } from "astro-icon/components";
 
 interface Props {
-	category: { id: number };
+	id: number;
 }
 
-const { category } = Astro.props;
+const { id } = Astro.props;
 ---
 
-<del-action-button
-	data-id={category.id}
-	class="flex items-center gap-2"
->
-	<Icon
-		name="lucide:trash-2"
-		class="h-5 w-5"
-	/>
+<del-action-button data-id={id} class="flex items-center gap-2">
+	<Icon name="lucide:trash-2" class="h-5 w-5" />
 	Borrar
 </del-action-button>
 
