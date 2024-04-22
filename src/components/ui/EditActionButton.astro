@@ -1,0 +1,58 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	id: number;
+}
+
+const { id } = Astro.props;
+---
+
+<edit-action-button class="p-0">
+	<button
+		data-id={id}
+		class="flex items-center gap-2 px-4 py-2"
+	>
+		<Icon
+			name="lucide:edit"
+			class="h-5 w-5"
+		/>
+		Editar
+	</button>
+</edit-action-button>
+
+<script>
+	import axios from "axios";
+
+	class EditActionButton extends HTMLElement {
+		constructor() {
+			super();
+
+			const editBtn = this.querySelector("[data-id]") as HTMLButtonElement;
+
+			editBtn.addEventListener("click", () => categoryEdit());
+
+			const categoryEdit = async () => {
+				editBtn?.closest("ul")?.classList.toggle("hidden");
+
+				if (editBtn.dataset.id !== undefined) {
+					try {
+						const response = await axios.get(`/api/categorias/${editBtn.dataset.id}.json`);
+
+						const searchParams = new URLSearchParams(Object.entries(response.data[0])).toString();
+
+						console.log(searchParams);
+
+						location.href = `/admin/editar-categoria?${searchParams}`;
+					} catch (error) {
+						if (axios.isAxiosError(error)) {
+							console.error(error);
+						}
+					}
+				}
+			};
+		}
+	}
+
+	customElements.define("edit-action-button", EditActionButton);
+</script>

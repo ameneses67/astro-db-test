@@ -2,16 +2,13 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { db, eq, Category } from "astro:db";
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, redirect }) => {
 	const id = Number(params.id);
 
 	const category = await db.select().from(Category).where(eq(Category.id, id));
 
 	if (!category) {
-		return new Response(null, {
-			status: 404,
-			statusText: "No se encontró la categoría.",
-		});
+		return redirect("/404", 307);
 	}
 
 	return new Response(JSON.stringify(category), {
@@ -26,30 +23,42 @@ export const DELETE: APIRoute = async ({ params }) => {
 	const id = Number(params.id);
 
 	if (!id) {
-		return new Response(null, {
-			status: 404,
-			statusText: "No se proporcionó ningún id.",
-		});
+		return new Response(
+			JSON.stringify({
+				message: "No se proporcionó ningún ID.",
+			}),
+			{ status: 404 },
+		);
 	}
 
 	await db.delete(Category).where(eq(Category.id, id));
 
-	return new Response(null, {
-		status: 204,
-		statusText: "Categoría borrada exitosamente.",
-	});
+	return new Response(
+		JSON.stringify({
+			message: "¡Categoría borrada exitosamente!",
+		}),
+		{ status: 200 },
+	);
 };
 
 export const PATCH: APIRoute = async ({ request, params }) => {
 	const id = Number(params.id);
 	const body = await request.json();
 
-	console.log(id);
-	console.log(body);
+	if (!id) {
+		return new Response(
+			JSON.stringify({
+				message: "No se proporcionó ningún ID.",
+			}),
+			{ status: 404 },
+		);
+	}
 
-	return new Response(
-		JSON.stringify({
-			message: "La categoría se ha actualizado con éxito.",
-		})
-	);
+	await db
+		.update(Category)
+		.set(body)
+		.where(eq(Category.id, id))
+		.returning({ updatedId: Category.id });
+
+	return new Response(JSON.stringify(body), { status: 200 });
 };

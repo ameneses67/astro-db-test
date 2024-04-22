@@ -1,78 +1,97 @@
 ---
 // Render mode
-export const prerender = false
+export const prerender = false;
 
 // Tools
-import { z } from 'zod'
+import { z } from "zod";
 
 // Layouts
-import BaseLayout from '@layouts/BaseLayout.astro'
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+// Schema
+import { categorySchema } from "src/schemas/categoryForm";
+
+type FormData = z.infer<typeof categorySchema>;
+
+type ImagePath = {
+	size: number;
+	type: string;
+	name: string;
+	lastModified: number;
+};
 
 // Components
-import Heading from '@components/ui/Heading.astro'
-import Section from '@ui/Section.astro'
-import CategoryForm from '@components/category/CategoryForm'
-import NewCategoryForm from '@components/category/NewCategoryForm.astro'
-import { categorySchema } from 'src/schemas/categoryForm'
-import { db } from 'astro:db'
-import { Category } from 'astro:db'
-import { eq } from 'astro:db'
+import Heading from "@ui/Heading.astro";
+import Section from "@ui/Section.astro";
+import NewCategoryForm from "@components/category/NewCategoryForm.astro";
 
 // Form submission
-export const errors = { name: '', description: '', imagePath: '' }
-if (Astro.request.method === 'POST') {
+export const errors = { name: "", description: "", imagePath: "" };
+if (Astro.request.method === "POST") {
 	try {
-		errors.name = ''
-		errors.description = ''
-		errors.imagePath = ''
+		errors.name = "";
+		errors.description = "";
+		errors.imagePath = "";
 
-		const formData = await Astro.request.formData()
-		const name = formData.get('name')
-		const description = formData.get('description')
-		const imagePath = (
-			formData.get('imagePath') as {
-				size: number
-				type: string
-				name: string
-				lastModified: number
+		const formData = await Astro.request.formData();
+
+		const data = Object.fromEntries(formData) as FormData;
+
+		data.imagePath = (formData.get("imagePath") as ImagePath).name;
+
+		console.log(data);
+
+		if (data.name) {
+			const response = await fetch(`${Astro.url.origin}/api/categorias.json?name=${data.name}`);
+
+			const resData = await response.json();
+
+			if (resData.length > 0) {
+				errors.name += "Esta categoría ya existe";
+
+				Astro.response.status = 400;
+				Astro.response.statusText = "Esta categoría ya existe.";
 			}
-		).name
-
-		const data = {
-			name,
-			description,
-			imagePath
-		} as z.infer<typeof categorySchema>
-		console.log(data)
-
-		const regCat = await db
-			.select()
-			.from(Category)
-			.where(eq(Category.name, data.name.toLowerCase()))
-
-		if (regCat.length > 0) {
-			errors.name += 'Esta categoría ya existe'
 		}
 
-		const formVal = categorySchema.safeParse(data)
+		const formVal = categorySchema.safeParse(data);
 
 		if (!formVal.success) {
-			formVal.error.issues.map((e) => (errors[e.path[0] as keyof typeof errors] += e.message))
-		} else {
-			await db.insert(Category).values(formVal.data)
+			formVal.error.issues.map((e) => (errors[e.path[0] as keyof typeof errors] += e.message));
 
-			return Astro.redirect('/admin/categorias')
+			Astro.response.status = 400;
+			Astro.response.statusText = "Validación de datos no existosa.";
+		} else {
+			const response = await fetch(`${Astro.url.origin}/api/categorias.json`, {
+				method: "POST",
+				body: JSON.stringify(formVal.data),
+				headers: {
+					"Content-Type": "application/json; charset=UTF-8",
+				},
+			});
+
+			if (!response.ok) {
+				throw new Error("No se puedo crear la categoría. Intenta de nuevo por favor.");
+			}
+
+			const data = await response.json();
+
+			new Response(JSON.stringify(data), {
+				status: 200,
+			});
+
+			return Astro.redirect("/admin/categorias");
 		}
 	} catch (error) {
 		if (error instanceof Error) {
-			console.log(error.message)
+			console.log(error.message);
 		}
 	}
 }
 
 // Head metadata
-const title = 'Nueva categoría'
-const description = 'Crear nueva categoría'
+const title = "Nueva categoría";
+const description = "Crear nueva categoría";
 ---
 
 <BaseLayout
@@ -88,6 +107,5 @@ const description = 'Crear nueva categoría'
 			Añade una nueva categoría
 		</Heading>
 		<NewCategoryForm />
-		<!-- <CategoryForm client:load /> -->
 	</Section>
 </BaseLayout>

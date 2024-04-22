@@ -20,25 +20,25 @@ const { category } = Astro.props;
 const { id, name, description, imagePath } = category;
 
 const images = import.meta.glob<{ default: ImageMetadata }>(
-	"/src/assets/*.{jpeg,jpg,png,gif}"
+	"/src/assets/*.{jpeg,jpg,png,gif,webp,avif}"
 );
 if (!images[`/src/assets/${imagePath}`])
 	throw new Error(
-		`"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`
+		`"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif,webp,avif}"`
 	);
 ---
 
 <a
 	href={slugify(name)}
 	data-id={id}
-	class="shadow-xl bg-base-300 overflow-hidden max-w-none sm:max-w-md card"
+	class="card max-w-none overflow-hidden bg-base-300 shadow-xl sm:max-w-md"
 >
 	<Image
 		src={images[`/src/assets/${imagePath}`]()}
 		alt={name}
 		width={450}
 		format="avif"
-		class="w-full aspect-square object-cover"
+		class="aspect-square w-full object-cover"
 	/>
 	<div class="card-body">
 		<Heading

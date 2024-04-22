@@ -1,0 +1,142 @@
+---
+// Render mode
+export const prerender = false;
+
+// Tools
+import { z } from "zod";
+
+// Layouts
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+// Components
+import Heading from "@components/ui/Heading.astro";
+import Section from "@ui/Section.astro";
+import NewCategoryForm from "@components/category/NewCategoryForm.astro";
+import axios from "axios";
+
+const catUpdSchema = z.object({
+	name: z
+		.string()
+		.min(1, { message: "El nombre de la categoría es requerido" })
+		.toLowerCase()
+		.optional(),
+	description: z
+		.string()
+		.min(1, { message: "La descripción de la categoría es requerida" })
+		.optional(),
+	imagePath: z
+		.string({ required_error: "El archivo de la imagen es requerdio" })
+		.regex(/[^\s]+(.*?).(jpg|jpeg|png|gif|webp|avif|JPG|JPEG|PNG|GIF|WEBP|AVIF)$/, {
+			message: "Los formatos válidos son jpg, png, gif, webp, avif",
+		})
+		.optional(),
+});
+
+interface Data {
+	name: FormDataEntryValue | null;
+	description: FormDataEntryValue | null;
+	imagePath: FormDataEntryValue | null;
+}
+
+interface ImagePath {
+	size: number;
+	type: string;
+	name: string;
+	lastModified: number;
+}
+
+// Form submission
+export const errors = { name: "", description: "", imagePath: "" };
+if (Astro.request.method === "POST") {
+	try {
+		errors.name = "";
+		errors.description = "";
+		errors.imagePath = "";
+
+		const id = Astro.url.searchParams.get("id");
+
+		const formData = await Astro.request.formData();
+		const name = formData.get("name");
+		const description = formData.get("description");
+		const imagePath = formData.get("imagePath") as ImagePath;
+
+		const data = {} as Data;
+
+		if (name) data.name = name;
+
+		if (description) data.description = description;
+
+		if (imagePath.name !== "undefined") data.imagePath = imagePath.name;
+
+		const formVal = catUpdSchema.safeParse(data);
+
+		if (!formVal.success) {
+			formVal.error.issues.map((e) => (errors[e.path[0] as keyof typeof errors] += e.message));
+			console.log("Errors: ", errors);
+
+			Astro.response.status = 400;
+			Astro.response.statusText = "Data validation failed.";
+		} else {
+			try {
+				const response = await fetch(`http://localhost:4321/api/categorias/${id}.json`, {
+					method: "PATCH",
+					body: JSON.stringify(data),
+					headers: {
+						"Content-Type": "application/json; charset=UTF-8",
+					},
+				});
+
+				if (!response.ok) {
+					throw new Error("Hubo un error al actualizar la categoría.");
+				}
+
+				const dataRes = response.json();
+
+				return Astro.redirect("/admin/categorias");
+			} catch (error) {
+				console.error(error);
+			}
+		}
+	} catch (error) {
+		if (error instanceof Error) {
+			console.log(error.message);
+		}
+	}
+}
+
+// Head metadata
+const title = "Editar categoría";
+const description = "Modifica los datos de la categoría";
+---
+
+<BaseLayout
+	{title}
+	{description}
+>
+	<Section>
+		<Heading
+			tagName="h1"
+			size="h1"
+			title="Editar categoría"
+		>
+			Modifica los datos de la categoría
+		</Heading>
+		<NewCategoryForm />
+	</Section>
+</BaseLayout>
+
+<script>
+	const querystring = window.location.search;
+
+	const nameInput = document.querySelector('[name="name"]') as HTMLInputElement;
+	const descInput = document.querySelector("textarea") as HTMLTextAreaElement;
+
+	const params = new URLSearchParams(querystring);
+
+	nameInput.value = params.get("name") as string;
+	descInput.value = params.get("description") as string;
+
+	const formBtn = document.querySelector("#new-category-form > button") as HTMLButtonElement;
+
+	formBtn.textContent = "Guardar cambios";
+</script>

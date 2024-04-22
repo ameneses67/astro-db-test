@@ -1,91 +1,95 @@
----
-import { createForm } from "simple:form";
-import { z } from "zod";
-import sanitizeHtml from "sanitize-html";
-
-const NewCatForm = createForm({
-	name: z
-		.string()
-		.min(1, { message: "El nombre de la categoría es obligatorio" })
-		.toLowerCase()
-		.transform((dirty) => sanitizeHtml(dirty)),
-	description: z
-		.string()
-		.min(1, { message: "La descripción de la categoría es obligatoria" })
-		.transform((dirty) => sanitizeHtml(dirty)),
-	imagePath: z
-		.string()
-		.regex(
-			/[^\s]+(.*?).(jpg|jpeg|png|gif|webp|avif|JPG|JPEG|PNG|GIF|WEBP|AVIF)$/,
-			{ message: "Formatos válidos: jpg, png, gif, webp, avif" }
-		)
-		.transform((dirty) => sanitizeHtml(dirty)),
-});
-
-const result = await Astro.locals.form.getData(NewCatForm);
-
-if (result?.data) {
-	console.log(result.data);
-
-	try {
-		const response = await fetch(`${Astro.url.origin}/api/categorias.json`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(result.data),
-		});
-
-		const category = await response.json();
-		console.log(category);
-	} catch (error) {
-		console.error(error);
-	}
-}
----
-
-<form method="POST">
-	<div class="flex flex-col md:flex-row items-start gap-4">
-		<div class="space-y-2 w-full max-w-xs">
-			<input
-				{...NewCatForm.inputProps.name}
-				placeholder="Categoría"
-				class="input input-bordered w-full"
-			/>
-			{
-				result?.fieldErrors?.name?.map((error) => (
-					<p class="text-error text-sm">{error}</p>
-				))
-			}
-		</div>
-		<div class="space-y-2 w-full max-w-xs">
-			<input
-				{...NewCatForm.inputProps.description}
-				placeholder="Descripción"
-				class="input input-bordered w-full"
-			/>
-			{
-				result?.fieldErrors?.description?.map((error) => (
-					<p class="text-error text-sm">{error}</p>
-				))
-			}
-		</div>
-		<div class="space-y-2 w-full max-w-xs">
-			<input
-				{...NewCatForm.inputProps.imagePath}
-				placeholder="p.ej., imagen.jpg"
-				class="input input-bordered w-full"
-			/>
-			{
-				result?.fieldErrors?.imagePath?.map((error) => (
-					<p class="text-error text-sm">{error}</p>
-				))
-			}
-		</div>
-	</div>
-	<button
-		type="submit"
-		class="btn btn-accent mt-4 px-6"
-		>Crear</button
+<category-form>
+	<form
+		id="new-category-form"
+		method="POST"
 	>
-</form>
+		<div class="flex flex-col items-start gap-4 md:flex-row">
+			<div class="w-full max-w-xs space-y-2">
+				<input
+					name="name"
+					type="text"
+					placeholder="Categoría"
+					class="input input-bordered w-full"
+				/>
+				<!-- {errors.name && <p class="flex items-center gap-2 text-sm text-error">{errors.name}</p>} -->
+			</div>
+			<div class="w-full max-w-xs space-y-2">
+				<textarea
+					name="description"
+					class="textarea textarea-bordered w-full"
+					placeholder="Descripción"
+					rows="1"
+				></textarea>
+				<!-- {
+				errors.description && (
+					<p class="flex items-center gap-2 text-sm text-error">{errors.description}</p>
+				)
+			} -->
+			</div>
+			<div class="w-full max-w-xs space-y-2">
+				<input
+					name="imagePath"
+					type="file"
+					class="file-input file-input-bordered w-full"
+				/>
+				<!-- {
+				errors.imagePath && (
+					<p class="flex items-center gap-2 text-sm text-error">{errors.imagePath}</p>
+				)
+			} -->
+			</div>
+		</div>
+		<button
+			type="submit"
+			class="btn btn-accent mt-4 px-6"
+			>Crear</button
+		>
+	</form>
+</category-form>
+
+<script>
+	class CategoryForm extends HTMLElement {
+		responseMessage: string;
+
+		constructor() {
+			super();
+
+			this.responseMessage = "";
+			const getResMsg = () => {
+				return this.responseMessage;
+			};
+			const setResMsg = (msg: string) => {
+				this.responseMessage = msg;
+			};
+
+			const form = this.querySelector("form") as HTMLFormElement;
+
+			form.addEventListener("submit", (e) => handleSubmit(e));
+
+			const handleSubmit = async (e: SubmitEvent) => {
+				e.preventDefault();
+
+				const formData = new FormData(e.target as HTMLFormElement);
+
+				const response = await fetch("/api/categorias.json", {
+					method: "POST",
+					body: formData,
+				});
+
+				const data = await response.json();
+
+				if (data.message) {
+					setResMsg(data.message);
+
+					const msgP = document.createElement("p");
+
+					msgP.textContent = getResMsg();
+
+					form.appendChild(msgP);
+				}
+			};
+		}
+	}
+
+	customElements.define("category-form", CategoryForm);
+</script>

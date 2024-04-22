@@ -1,0 +1,47 @@
+---
+import { Icon } from "astro-icon/components";
+
+import Button from "./Button.astro";
+import EditActionButton from "@ui/EditActionButton.astro";
+import DelActionButton from "@ui/DelActionButton.astro";
+
+interface Props {
+	id: number;
+}
+
+const { id } = Astro.props;
+---
+
+<action-btn>
+	<Button
+		color="primary"
+		style="ghost"
+		id="action-btn"
+	>
+		<Icon name="lucide:ellipsis-vertical" />
+	</Button>
+	<ul class="menu absolute right-10 top-full z-10 hidden max-w-fit rounded-box bg-base-300">
+		<li>
+			<EditActionButton {id} />
+		</li>
+		<li>
+			<DelActionButton {id} />
+		</li>
+	</ul>
+</action-btn>
+
+<script>
+	class ActionBtn extends HTMLElement {
+		constructor() {
+			super();
+
+			const actionBtn = this.querySelector("#action-btn") as HTMLButtonElement;
+
+			actionBtn.addEventListener("click", () =>
+				actionBtn.nextElementSibling?.classList.toggle("hidden")
+			);
+		}
+	}
+
+	customElements.define("action-btn", ActionBtn);
+</script>

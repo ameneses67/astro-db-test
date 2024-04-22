@@ -2,45 +2,68 @@
 import { Icon } from "astro-icon/components";
 
 interface Props {
-	category: { id: number };
+	id: number;
 }
 
-const { category } = Astro.props;
+const { id } = Astro.props;
 ---
 
-<del-action-button
-	data-id={category.id}
-	class="flex items-center gap-2"
->
-	<Icon
-		name="lucide:trash-2"
-		class="h-5 w-5"
-	/>
-	Borrar
+<del-action-button class="p-0">
+	<div
+		data-id={id}
+		class="flex items-center gap-2 px-4 py-2"
+	>
+		<Icon
+			name="lucide:trash-2"
+			class="h-5 w-5"
+		/>
+		Borrar
+	</div>
 </del-action-button>
 
 <script>
-	import { db, eq, Category } from "astro:db";
+	import axios, { AxiosError } from "axios";
 
 	class DelActionButton extends HTMLElement {
 		constructor() {
 			super();
 
-			const delBtn = document.querySelector("[data-id]") as HTMLElement;
-			console.log(delBtn);
+			const delBtn = this.querySelector("[data-id]") as HTMLElement;
 
-			delBtn?.addEventListener("click", () => {
-				console.log("Click delBtn");
-				categoryDelete();
-			});
+			delBtn?.addEventListener("click", () => categoryDelete());
 
 			const categoryDelete = async () => {
 				delBtn?.closest("ul")?.classList.toggle("hidden");
 
 				if (delBtn.dataset.id !== undefined) {
-					const delCatId = parseInt(delBtn.dataset.id);
+					try {
+						const response = await axios.delete(`/api/categorias/${delBtn.dataset.id}.json`);
 
-					await db.delete(Category).where(eq(Category.id, delCatId));
+						if (response.status === 200) {
+							delBtn.closest("tr")?.remove();
+						}
+					} catch (error) {
+						if (error instanceof AxiosError) {
+							if (error.response) {
+								// La respuesta fue hecha y el servidor respondió con un código de estado
+								// que esta fuera del rango de 2xx
+								console.log("Data: ", error.response.data);
+								console.log("Status: ", error.response.status);
+								console.log("Headers: ", error.response.headers);
+							} else if (error.request) {
+								// La petición fue hecha pero no se recibió respuesta
+								// `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
+								// http.ClientRequest en node.js
+								console.log("Request: ", error.request);
+							} else {
+								// Algo paso al preparar la petición que lanzo un Error
+								console.log("Error", error.message);
+							}
+							console.log("Config: ", error.config);
+						} else {
+							console.error(error);
+						}
+					}
 				}
 			};
 		}
