@@ -1,39 +1,24 @@
 ---
+// Astro db
+import type { Product, Brand, Size } from "astro:db";
+
 // Components
 import ModalCard from "@components/product/ModalCard.astro";
 
 interface Props {
-	productData: {
-		Product: {
-			name: string;
-			description: string;
-			brandId: number | null;
-			categoryId: number;
-			subcategoryId: number;
-			price: number;
-			sizeId: number | null;
-			image: string;
-		};
-		Brand: {
-			id: number;
-			name: string;
-		} | null;
-		Size: {
-			id: number;
-			code: string;
-			description: string;
-		} | null;
+	products: {
+		Product: typeof Product.$inferSelect;
+		Brand: typeof Brand.$inferSelect | null;
+		Size: typeof Size.$inferSelect | null;
 	}[];
 }
 
-const { productData } = Astro.props;
+const { products } = Astro.props;
 ---
 
-<div
-	class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4"
->
+<div class="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
 	{
-		productData.map((product) => (
+		products.map((product) => (
 			<ModalCard
 				name={product.Product.name}
 				description={product.Product.description}

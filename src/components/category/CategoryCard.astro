@@ -1,4 +1,7 @@
 ---
+// Astro db
+import type { Category } from "astro:db";
+
 // Astro tools
 import { Image } from "astro:assets";
 
@@ -10,10 +13,9 @@ import { slugify } from "@libs/utils";
 
 // Components
 import Heading from "@ui/Heading.astro";
-import type { CategoryType } from "src/env";
 
 interface Props {
-	category: CategoryType;
+	category: typeof Category.$inferSelect;
 }
 
 const { category } = Astro.props;

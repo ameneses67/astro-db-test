@@ -1,4 +1,7 @@
 ---
+// Astro db
+import type { Category } from "astro:db";
+
 // Astro tools
 import { GET } from "./api/categorias/index.json";
 
@@ -8,11 +11,10 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 // Components
 import CategoryCard from "@components/category/CategoryCard.astro";
 import Section from "@ui/Section.astro";
-import type { CategoryType } from "src/env";
 
 // Data
 const response = await GET(Astro);
-const categories: CategoryType[] = await response.json();
+const categories = (await response.json()) as (typeof Category.$inferSelect)[];
 
 // Head metadata
 const title = "Categrías";

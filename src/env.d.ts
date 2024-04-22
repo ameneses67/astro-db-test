@@ -19,3 +19,17 @@ export type SubcategoryType = {
 	categoryId: number;
 	published: Date;
 };
+
+export type ProductType = {
+	id: number;
+	name: string;
+	description: string;
+	brandId: number | null;
+	categoryId: number;
+	subcategoryId: number;
+	price: number;
+	sizeId: number | null;
+	colorId: number | null;
+	image: string;
+	published: Date;
+};

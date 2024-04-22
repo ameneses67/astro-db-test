@@ -1,21 +1,15 @@
 ---
-// Astro db
-import { Size, Brand, db, Product, Category, eq } from "astro:db";
-
 // Layouts
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 // Components
 import Section from "../components/ui/Section.astro";
-import BillboardHeader from "../components/billboard/BillboardHeader.astro";
 import BillboardBody from "../components/billboard/BillboardBody.astro";
 
 // Product data
-const products = await db
-	.select()
-	.from(Product)
-	.leftJoin(Brand, eq(Product.brandId, Brand.id))
-	.leftJoin(Size, eq(Product.sizeId, Size.id));
+const response = await fetch(`${Astro.url}/api/productos`);
+const products = await response.json();
+console.log(products);
 
 // Head metadata
 const title = "Astro Db Test";
@@ -27,6 +21,6 @@ const description = "Proyecto para probar la nueva base de datos de Astro.";
 	{description}
 >
 	<Section>
-		<BillboardBody productData={products} />
+		<BillboardBody {products} />
 	</Section>
 </BaseLayout>

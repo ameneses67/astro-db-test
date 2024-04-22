@@ -3,15 +3,13 @@ import { Icon } from "astro-icon/components";
 
 interface Props {
 	id: number;
-	id: number;
 }
 
-const { id } = Astro.props;
 const { id } = Astro.props;
 ---
 
 <del-action-button class="p-0">
-	<div
+	<button
 		data-id={id}
 		class="flex items-center gap-2 px-4 py-2"
 	>
@@ -20,7 +18,7 @@ const { id } = Astro.props;
 			class="h-5 w-5"
 		/>
 		Borrar
-	</div>
+	</button>
 </del-action-button>
 
 <script>

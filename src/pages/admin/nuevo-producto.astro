@@ -9,12 +9,12 @@ import { db, Product } from "astro:db";
 import { uniqueId } from "@libs/utils";
 
 // Layouts
-import BaseLayout from "../layouts/BaseLayout.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 
 // Components
-import Section from "../components/ui/Section.astro";
-import NewProductForm from "../components/product/NewProductForm.astro";
-import Heading from "../components/ui/Heading.astro";
+import Section from "../../components/ui/Section.astro";
+import NewProductForm from "../../components/product/NewProductForm.astro";
+import Heading from "../../components/ui/Heading.astro";
 
 // Create new product
 if (Astro.request.method === "POST") {
@@ -44,7 +44,7 @@ if (Astro.request.method === "POST") {
 	) {
 		// Insert form data into the product table
 		await db.insert(Product).values({
-			id: uniqueId(),
+			id,
 			name,
 			description,
 			brandId,
