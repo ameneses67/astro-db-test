@@ -1,10 +1,7 @@
 ---
-// Astro db
-// import { db, Category } from "astro:db";
-import { GET } from "../api/subcategorias/index.json";
-
 // Astro tools
 import { Icon } from "astro-icon/components";
+import { GET } from "../api/subcategorias";
 
 // Utilities
 import { getFormattedDate } from "@libs/utils";
@@ -16,26 +13,19 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import Heading from "@components/ui/Heading.astro";
 import Section from "@ui/Section.astro";
 import Button from "@ui/Button.astro";
-import type { CategoryType } from "./categorias.astro";
 
-// Data
-// const categories = await db.select().from(Category);
-export type SubcategoryType = {
-	id: string;
-	name: string;
-	description: string;
-	imagePath: string;
-	categoryId: string;
-	published: Date;
-};
+// Types
+import type { CategoryType, SubcategoryType } from "../../env";
+import ActionButton from "@components/ui/ActionButton.astro";
 
-type ResponseType = {
+type Response = {
 	Subcategory: SubcategoryType;
 	Category: CategoryType;
 };
 
+// Data
 const response = await GET(Astro);
-const subcategories: ResponseType[] = await response.json();
+const subcategories = (await response.json()) as Response[];
 
 // Head metadata
 const title = "Subcategorías";
@@ -47,7 +37,7 @@ const description = "Listado de subcategorías";
 	{description}
 >
 	<Section>
-		<div class="flex justify-between items-center">
+		<div class="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
 			<Heading
 				tagName="h1"
 				size="h1"
@@ -67,9 +57,8 @@ const description = "Listado de subcategorías";
 				Crear nueva
 			</Button>
 		</div>
-		<div class="overflow-x-auto">
+		<div>
 			<table class="table table-zebra">
-				<!-- head -->
 				<thead>
 					<tr>
 						<th>Subcategoría / Id</th>
@@ -81,7 +70,6 @@ const description = "Listado de subcategorías";
 					</tr>
 				</thead>
 				<tbody>
-					<!-- row 1 -->
 					{
 						subcategories.map((subcategory) => (
 							<tr>
@@ -94,39 +82,7 @@ const description = "Listado de subcategorías";
 								<td>{subcategory.Category.name}</td>
 								<td>{getFormattedDate(subcategory.Subcategory.published)}</td>
 								<td class="relative max-w-fit">
-									<Button
-										color="primary"
-										style="ghost"
-										classes="actions-btn"
-									>
-										<Icon name="lucide:ellipsis-vertical" />
-									</Button>
-									<ul class="menu bg-base-300 rounded-box max-w-fit absolute right-4 top-full z-10 hidden">
-										<li>
-											<a
-												class="cat-edit"
-												data-id={subcategory.Subcategory.id}
-											>
-												<Icon
-													name="lucide:edit"
-													class="h-5 w-5"
-												/>
-												Editar
-											</a>
-										</li>
-										<li>
-											<a
-												class="cat-del"
-												data-id={subcategory.Subcategory.id}
-											>
-												<Icon
-													name="lucide:trash-2"
-													class="h-5 w-5"
-												/>
-												Borrar
-											</a>
-										</li>
-									</ul>
+									<ActionButton id={subcategory.Subcategory.id} />
 								</td>
 							</tr>
 						))
@@ -136,43 +92,3 @@ const description = "Listado de subcategorías";
 		</div>
 	</Section>
 </BaseLayout>
-
-<script>
-	// import { db, eq, Category } from "astro:db";
-
-	// Selectors
-	const actionsBtn = document.querySelectorAll(
-		".actions-btn"
-	) as NodeListOf<HTMLAnchorElement>;
-
-	const subCatDelBtn = document.querySelectorAll(
-		".cat-del"
-	) as NodeListOf<HTMLAnchorElement>;
-
-	// Show actions menu
-	actionsBtn.forEach((btn) =>
-		btn.addEventListener("click", () => toggleActionsMenu(btn))
-	);
-
-	// Delete functionality
-	subCatDelBtn.forEach((btn) =>
-		btn.addEventListener("click", () => subcategoryDelete(btn))
-	);
-
-	// Functions
-	function toggleActionsMenu(btn: HTMLAnchorElement) {
-		btn.nextElementSibling?.classList.toggle("hidden");
-	}
-
-	async function subcategoryDelete(btn: HTMLAnchorElement) {
-		// await db.delete(Category).where(eq(Category.id, btn.dataset.id as string));
-		btn.parentElement?.parentElement?.classList.toggle("hidden");
-
-		return await fetch(`/api/subcategorias/${btn.dataset.id}.json`, {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
-	}
-</script>

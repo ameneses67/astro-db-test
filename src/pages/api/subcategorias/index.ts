@@ -1,20 +1,40 @@
 export const prerender = false;
 
-import { imageFileValidation } from "@libs/utils";
-import type { APIRoute } from "astro";
 import { Category, db, eq, Subcategory } from "astro:db";
+import type { APIRoute } from "astro";
 
-export const GET: APIRoute = async () => {
+import { imageFileValidation } from "@libs/utils";
+
+export const GET: APIRoute = async ({ request, redirect }) => {
+	const url = new URL(request.url);
+	const categoryId = url.searchParams.get("categoryId");
+
+	if (categoryId) {
+		const subcategories = await db
+			.select()
+			.from(Subcategory)
+			.innerJoin(Category, eq(Subcategory.categoryId, Category.id))
+			.where(eq(Subcategory.categoryId, parseInt(categoryId)));
+
+		if (subcategories.length < 1) {
+			return redirect("/404", 307);
+		}
+
+		return new Response(JSON.stringify(subcategories), {
+			status: 200,
+			headers: {
+				"Content-Type": "application/json; charset=UTF-8",
+			},
+		});
+	}
+
 	const subcategories = await db
 		.select()
 		.from(Subcategory)
 		.innerJoin(Category, eq(Subcategory.categoryId, Category.id));
 
-	if (!subcategories) {
-		return new Response(null, {
-			status: 404,
-			statusText: "Subategories not found",
-		});
+	if (subcategories.length < 1) {
+		return redirect("/404", 307);
 	}
 
 	return new Response(JSON.stringify(subcategories), {
@@ -40,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
 			}),
 			{
 				status: 400,
-			}
+			},
 		);
 	}
 
@@ -51,22 +71,18 @@ export const POST: APIRoute = async ({ request }) => {
 			}),
 			{
 				status: 400,
-			}
+			},
 		);
 	}
 
-	if (
-		typeof imagePath !== "string" ||
-		!imagePath ||
-		!imageFileValidation(imagePath)
-	) {
+	if (typeof imagePath !== "string" || !imagePath || !imageFileValidation(imagePath)) {
 		return new Response(
 			JSON.stringify({
 				message: "El formato de la imagen es inválido.",
 			}),
 			{
 				status: 400,
-			}
+			},
 		);
 	}
 
@@ -77,7 +93,7 @@ export const POST: APIRoute = async ({ request }) => {
 			}),
 			{
 				status: 400,
-			}
+			},
 		);
 	}
 
@@ -89,6 +105,6 @@ export const POST: APIRoute = async ({ request }) => {
 		JSON.stringify({
 			message: "¡Subcategoría creada exitosamente!",
 		}),
-		{ status: 200 }
+		{ status: 200 },
 	);
 };

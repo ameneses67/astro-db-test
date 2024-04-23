@@ -1,11 +1,11 @@
 // Render mode
 export const prerender = false;
 
-// Astro db
+// Astro tools
 import { db, Category, eq } from "astro:db";
-
-// Astro api
 import type { APIRoute } from "astro";
+
+// Utils
 import { imageFileValidation } from "@libs/utils";
 
 export const GET: APIRoute = async ({ request, redirect }) => {

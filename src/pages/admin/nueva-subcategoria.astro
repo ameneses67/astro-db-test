@@ -2,9 +2,8 @@
 // Render mode
 export const prerender = false;
 
-// Astro db
-import { db, eq, Category } from "astro:db";
-import { GET } from "../api/subcategorias/index.json";
+// Astro tools
+import { GET } from "../api/subcategorias";
 
 // Ulilities
 import { imageFileValidation } from "@libs/utils";
@@ -16,14 +15,11 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import Heading from "@components/ui/Heading.astro";
 import Section from "@ui/Section.astro";
 import NewSubcategoryForm from "@components/category/NewSubcategoryForm.astro";
-import type { SubcategoryType } from "./subcategorias.astro";
+
+// Types
+import type { SubcategoryType } from "../../env";
 
 const subcategoryRegistered = async (subcategory: string) => {
-	// const catReg = await db
-	// 	.select()
-	// 	.from(Category)
-	// 	.where(eq(Category.name, category));
-
 	const response = await GET(Astro);
 	const subcat: SubcategoryType[] = await response.json();
 	const subcatReg = subcat.filter((sub) => (sub.name = subcategory));
@@ -57,10 +53,7 @@ if (Astro.request.method === "POST") {
 			errors.description += "Ingresa la descripción de la subcategoría";
 		}
 
-		if (
-			imagePath.length < 1 ||
-			imageFileValidation(imagePath as string) === false
-		) {
+		if (imagePath.length < 1 || imageFileValidation(imagePath as string) === false) {
 			errors.imagePath += "El formato de la imagen es inválido";
 		}
 

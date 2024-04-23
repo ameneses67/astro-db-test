@@ -1,37 +1,32 @@
 ---
 // Astro tools
 import { Image } from "astro:assets";
+import type { Category } from "astro:db";
 
 // Types
 import type { ImageMetadata } from "astro";
 
 interface Props {
-	id: number;
-	name: string;
-	description: string;
-	imagePath: string;
+	category: typeof Category.$inferSelect;
 }
 
-const { id, name, description, imagePath } = Astro.props;
+const { category } = Astro.props;
+const { id, name, description, imagePath } = category;
 
 const images = import.meta.glob<{ default: ImageMetadata }>(
 	"/src/assets/*.{jpeg,jpg,png,gif,webp}"
 );
 if (!images[`/src/assets/${imagePath}`])
-	throw new Error(
-		`"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif,webp}"`
-	);
+	throw new Error(`"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif,webp}"`);
 ---
 
 <div
 	data-id={id}
-	class="h-40 sm:h-60 md:h-80 mx-auto bg-base-300 rounded-xl overflow-hidden relative"
+	class="relative mx-auto h-40 overflow-hidden rounded-xl bg-base-300 sm:h-60 md:h-80"
 >
-	<div
-		class="flex justify-center items-center absolute w-full h-full bg-black/60 p-8"
-	>
+	<div class="absolute flex h-full w-full items-center justify-center bg-black/60 p-8">
 		<h2
-			class="text-4xl sm:text-5xl text-white text-center font-bold [text-shadow:1px_1px_2px_var(--tw-shadow-color)] shadow-black capitalize"
+			class="text-center text-4xl font-bold capitalize text-white shadow-black [text-shadow:1px_1px_2px_var(--tw-shadow-color)] sm:text-5xl"
 		>
 			{description}
 		</h2>
@@ -43,6 +38,6 @@ if (!images[`/src/assets/${imagePath}`])
 		height={320}
 		format="avif"
 		quality={"low"}
-		class="w-full h-full object-cover"
+		class="h-full w-full object-cover"
 	/>
 </div>

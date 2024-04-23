@@ -1,9 +1,7 @@
 ---
-// Astro db
-import { db, eq, Category, Subcategory, Brand, Size, Product } from "astro:db";
-
 // Astro tools
 import type { GetStaticPaths } from "astro";
+import { GET } from "./api/subcategorias/index";
 
 // Layouts
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -16,12 +14,18 @@ import Section from "@ui/Section.astro";
 import BillboardBody from "@components/billboard/BillboardBody.astro";
 import BillboardHeader from "@components/billboard/BillboardHeader.astro";
 
+// Types
+import type { CategoryType, SubcategoryType } from "src/env";
+
+type Subcategory = {
+	Subcategory: SubcategoryType;
+	Category: CategoryType;
+};
+
 // Routes
 export const getStaticPaths = (async () => {
-	const subcategories = await db
-		.select()
-		.from(Subcategory)
-		.innerJoin(Category, eq(Subcategory.categoryId, Category.id));
+	const response = await GET(Astro);
+	const subcategories = (await response.json()) as Subcategory[];
 
 	return subcategories.map((subcategory) => ({
 		params: {
@@ -31,20 +35,17 @@ export const getStaticPaths = (async () => {
 	}));
 }) satisfies GetStaticPaths;
 
-const { subcategories } = Astro.params;
 const { subcategory } = Astro.props;
 
-// Data
-const products = await db
-	.select()
-	.from(Product)
-	.leftJoin(Brand, eq(Product.brandId, Brand.id))
-	.leftJoin(Size, eq(Product.sizeId, Size.id))
-	.where(eq(Product.subcategoryId, subcategory.Subcategory.id));
+// Product data
+const response = await fetch(
+	`${Astro.url.origin}/api/productos?subcategoryId=${subcategory.Subcategory.id}`
+);
+const products = await response.json();
 
 // Head metadata
 const title = subcategory.Subcategory.name;
-const description = subcategory.Subcategory.name;
+const description = subcategory.Subcategory.description;
 ---
 
 <BaseLayout
@@ -52,12 +53,7 @@ const description = subcategory.Subcategory.name;
 	{description}
 >
 	<Section>
-		<BillboardHeader
-			id={subcategory.Subcategory.id}
-			name={subcategory.Subcategory.name}
-			description={subcategory.Subcategory.description}
-			imagePath={subcategory.Subcategory.imagePath}
-		/>
+		<BillboardHeader category={subcategory.Category} />
 		<BillboardBody {products} />
 	</Section>
 </BaseLayout>

@@ -6,7 +6,7 @@ export const prerender = false;
 import { Icon } from "astro-icon/components";
 
 // Astro api
-import { GET } from "../api/categorias/index.json";
+import { GET } from "../api/categorias";
 
 // Types
 import type { CategoryType } from "src/env";
@@ -25,7 +25,7 @@ import ActionButton from "@ui/ActionButton.astro";
 
 // Data
 const response = await GET(Astro);
-const categories: CategoryType[] = await response.json();
+const categories = (await response.json()) as CategoryType[];
 
 // Head metadata
 const title = "Categorías";
@@ -37,7 +37,7 @@ const description = "Listado de categorías";
 	{description}
 >
 	<Section>
-		<div class="flex items-center justify-between">
+		<div class="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
 			<Heading
 				tagName="h1"
 				size="h1"
@@ -90,3 +90,4 @@ const description = "Listado de categorías";
 		</div>
 	</Section>
 </BaseLayout>
+../api/categorias

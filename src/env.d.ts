@@ -3,33 +3,14 @@
 /// <reference types="astro/client" />
 /// <reference types="simple-stack-form/types" />
 
-export type CategoryType = {
-	id: number;
-	name: string;
-	description: string;
-	imagePath: string;
-	published: Date;
-};
+import type { Brand, Category, Product, Size, Subcategory } from "astro:db";
 
-export type SubcategoryType = {
-	id: number;
-	name: string;
-	description: string;
-	imagePath: string;
-	categoryId: number;
-	published: Date;
-};
+export type CategoryType = typeof Category.$inferSelect;
 
-export type ProductType = {
-	id: number;
-	name: string;
-	description: string;
-	brandId: number | null;
-	categoryId: number;
-	subcategoryId: number;
-	price: number;
-	sizeId: number | null;
-	colorId: number | null;
-	image: string;
-	published: Date;
-};
+export type SubcategoryType = typeof Subcategory.$inferSelect;
+
+export type BrandType = typeof Brand.$inferSelect;
+
+export type SizeType = typeof Size.$inferSelect;
+
+export type ProductType = typeof Product.$inferSelect;

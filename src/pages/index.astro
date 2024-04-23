@@ -7,9 +7,8 @@ import Section from "../components/ui/Section.astro";
 import BillboardBody from "../components/billboard/BillboardBody.astro";
 
 // Product data
-const response = await fetch(`${Astro.url}/api/productos`);
+const response = await fetch(`${Astro.url.origin}/api/productos`);
 const products = await response.json();
-console.log(products);
 
 // Head metadata
 const title = "Astro Db Test";

@@ -1,9 +1,9 @@
 ---
-// Astro db
-import { db, eq, Category, Brand, Size, Product } from "astro:db";
-
 // Astro tools
 import type { GetStaticPaths } from "astro";
+import { GET } from "./api/categorias";
+
+// Layouts
 import BaseLayout from "@layouts/BaseLayout.astro";
 
 // Utils
@@ -14,9 +14,19 @@ import Section from "@ui/Section.astro";
 import BillboardBody from "@components/billboard/BillboardBody.astro";
 import BillboardHeader from "@components/billboard/BillboardHeader.astro";
 
+// Types
+import type { BrandType, CategoryType, ProductType, SizeType } from "src/env";
+
+type Response = {
+	Product: ProductType;
+	Brand: BrandType;
+	Size: SizeType;
+};
+
 // Routes
 export const getStaticPaths = (async () => {
-	const categories = await db.select().from(Category);
+	const response = await GET(Astro);
+	const categories = (await response.json()) as CategoryType[];
 
 	return categories.map((category) => ({
 		params: { categories: slugify(category.name) },
@@ -27,12 +37,8 @@ export const getStaticPaths = (async () => {
 const { category } = Astro.props;
 
 // Data
-const products = await db
-	.select()
-	.from(Product)
-	.leftJoin(Brand, eq(Product.brandId, Brand.id))
-	.leftJoin(Size, eq(Product.sizeId, Size.id))
-	.where(eq(Product.categoryId, category.id));
+const response = await fetch(`${Astro.url.origin}/api/productos?categoryId=${category.id}`);
+const products = (await response.json()) as Response[];
 
 // Head metadata
 const title = category.name;
@@ -44,12 +50,7 @@ const description = category.name;
 	{description}
 >
 	<Section>
-		<BillboardHeader
-			id={category.id}
-			name={category.name}
-			description={category.description}
-			imagePath={category.imagePath}
-		/>
+		<BillboardHeader {category} />
 		<BillboardBody {products} />
 	</Section>
 </BaseLayout>

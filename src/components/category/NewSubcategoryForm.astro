@@ -1,15 +1,12 @@
 ---
-// Astro tools
-import { Icon } from "astro-icon/components";
+//Astro tools
+import { GET } from "../../pages/api/categorias";
 
 // Types
-import type { CategoryType } from "src/pages/admin/categorias.astro";
+import type { CategoryType } from "src/env";
 
-//Data
-import { GET } from "../../pages/api/categorias/index.json";
-
-let response = await GET(Astro);
-const categories: CategoryType[] = await response.json();
+const response = await GET(Astro);
+const categories = (await response.json()) as CategoryType[];
 
 // Errors
 import { errors } from "src/pages/admin/nueva-subcategoria.astro";
@@ -19,21 +16,17 @@ import { errors } from "src/pages/admin/nueva-subcategoria.astro";
 	id="new-subcategory-form"
 	method="POST"
 >
-	<div class="flex flex-col md:flex-row items-start gap-4">
-		<div class="space-y-2 w-full max-w-xs">
+	<div class="flex flex-col items-start gap-4 lg:flex-row">
+		<div class="w-full max-w-xs space-y-2">
 			<input
 				name="name"
 				type="text"
 				placeholder="Subategoría"
 				class="input input-bordered w-full"
 			/>
-			{
-				errors.name && (
-					<p class="flex items-start gap-2 text-error text-sm">{errors.name}</p>
-				)
-			}
+			{errors.name && <p class="flex items-start gap-2 text-sm text-error">{errors.name}</p>}
 		</div>
-		<div class="space-y-2 w-full max-w-xs">
+		<div class="w-full max-w-xs space-y-2">
 			<textarea
 				name="description"
 				class="textarea textarea-bordered w-full"
@@ -42,13 +35,11 @@ import { errors } from "src/pages/admin/nueva-subcategoria.astro";
 			></textarea>
 			{
 				errors.description && (
-					<p class="flex items-center gap-2 text-error text-sm">
-						{errors.description}
-					</p>
+					<p class="flex items-center gap-2 text-sm text-error">{errors.description}</p>
 				)
 			}
 		</div>
-		<div class="space-y-2 w-full max-w-xs">
+		<div class="w-full max-w-xs space-y-2">
 			<input
 				name="imagePath"
 				type="text"
@@ -57,13 +48,11 @@ import { errors } from "src/pages/admin/nueva-subcategoria.astro";
 			/>
 			{
 				errors.imagePath && (
-					<p class="flex items-center gap-2 text-error text-sm">
-						{errors.imagePath}
-					</p>
+					<p class="flex items-center gap-2 text-sm text-error">{errors.imagePath}</p>
 				)
 			}
 		</div>
-		<div class="space-y-2 w-full max-w-xs">
+		<div class="w-full max-w-xs space-y-2">
 			<select
 				name="categoryId"
 				class="select select-bordered w-full"
@@ -86,9 +75,7 @@ import { errors } from "src/pages/admin/nueva-subcategoria.astro";
 			</select>
 			{
 				errors.categoryId && (
-					<p class="flex items-center gap-2 text-error text-sm">
-						{errors.categoryId}
-					</p>
+					<p class="flex items-center gap-2 text-sm text-error">{errors.categoryId}</p>
 				)
 			}
 		</div>

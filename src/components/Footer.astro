@@ -1,28 +1,24 @@
 ---
-// Astro db
-import { db, eq, Category, Subcategory } from "astro:db";
-
 // Utilities
 import { slugify } from "@libs/utils";
 
+// Types
+import type { CategoryType, SubcategoryType } from "src/env";
+
+type Response = {
+	Subcategory: SubcategoryType;
+	Category: CategoryType;
+};
+
 // Data
-const ropaSub = await db
-	.select()
-	.from(Subcategory)
-	.innerJoin(Category, eq(Subcategory.categoryId, Category.id))
-	.where(eq(Subcategory.categoryId, 1));
+const response1 = await fetch(`${Astro.url.origin}/api/subcategorias?categoryId=1`);
+const ropaSub = (await response1.json()) as Response[];
 
-const cuidadoPersonalSub = await db
-	.select()
-	.from(Subcategory)
-	.innerJoin(Category, eq(Subcategory.categoryId, Category.id))
-	.where(eq(Subcategory.categoryId, 2));
+const response2 = await fetch(`${Astro.url.origin}/api/subcategorias?categoryId=2`);
+const cuidadoPersonalSub = (await response2.json()) as Response[];
 
-const joyeriaSub = await db
-	.select()
-	.from(Subcategory)
-	.innerJoin(Category, eq(Subcategory.categoryId, Category.id))
-	.where(eq(Subcategory.categoryId, 3));
+const response3 = await fetch(`${Astro.url.origin}/api/subcategorias?categoryId=3`);
+const joyeriaSub = (await response3.json()) as Response[];
 ---
 
 <footer class="footer bg-base-200 p-10 text-base-content">
@@ -70,7 +66,10 @@ const joyeriaSub = await db
 	<form>
 		<h6 class="footer-title">Promociones</h6>
 		<fieldset class="form-control max-w-xs">
-			<label for="email" class="label">
+			<label
+				for="email"
+				class="label"
+			>
 				<span class="label-text"
 					>Déjanos tu correo y mantente actualizada con nuestra promociones</span
 				>
