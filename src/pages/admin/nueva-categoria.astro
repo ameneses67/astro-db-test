@@ -24,70 +24,71 @@ type ImagePath = {
 import Heading from "@ui/Heading.astro";
 import Section from "@ui/Section.astro";
 import NewCategoryForm from "@components/category/NewCategoryForm.astro";
+import CategoryForm from "@components/category/CategoryForm.astro";
 
 // Form submission
-export const errors = { name: "", description: "", imagePath: "" };
-if (Astro.request.method === "POST") {
-	try {
-		errors.name = "";
-		errors.description = "";
-		errors.imagePath = "";
+// export const errors = {} as FormData;
+// if (Astro.request.method === "POST") {
+// 	try {
+// 		errors.name = "";
+// 		errors.description = "";
+// 		errors.imagePath = "";
 
-		const formData = await Astro.request.formData();
+// 		const formData = await Astro.request.formData();
 
-		const data = Object.fromEntries(formData) as FormData;
+// 		const data = Object.fromEntries(formData) as FormData;
 
-		data.imagePath = (formData.get("imagePath") as ImagePath).name;
+// 		data.imagePath = (formData.get("imagePath") as ImagePath).name;
 
-		console.log(data);
+// 		console.log(data);
 
-		if (data.name) {
-			const response = await fetch(`${Astro.url.origin}/api/categorias?name=${data.name}`);
+// 		if (data.name) {
+// 			const response = await fetch(`${Astro.url.origin}/api/categorias?name=${data.name}`);
 
-			const resData = await response.json();
+// 			const resData = await response.json();
 
-			if (resData.length > 0) {
-				errors.name += "Esta categoría ya existe";
+// 			if (resData.length > 0) {
+// 				errors.name += "Esta categoría ya existe";
 
-				Astro.response.status = 400;
-				Astro.response.statusText = "Esta categoría ya existe.";
-			}
-		}
+// 				Astro.response.status = 400;
+// 				Astro.response.statusText = "Esta categoría ya existe.";
+// 			}
+// 		}
 
-		const formVal = categorySchema.safeParse(data);
+// 		const formVal = categorySchema.safeParse(data);
 
-		if (!formVal.success) {
-			formVal.error.issues.map((e) => (errors[e.path[0] as keyof typeof errors] += e.message));
+// 		if (!formVal.success) {
+// 			formVal.error.issues.map((e) => (errors[e.path[0] as keyof typeof errors] += e.message));
 
-			Astro.response.status = 400;
-			Astro.response.statusText = "Validación de datos no existosa.";
-		} else {
-			const response = await fetch(`${Astro.url.origin}/api/categorias`, {
-				method: "POST",
-				body: JSON.stringify(formVal.data),
-				headers: {
-					"Content-Type": "application/json; charset=UTF-8",
-				},
-			});
+// 			Astro.response.status = 400;
+// 			Astro.response.statusText = "Validación de datos no existosa.";
+// 		} else {
+// 			const response = await fetch(`${Astro.url.origin}/api/categorias`, {
+// 				method: "POST",
+// 				body: JSON.stringify(formVal.data),
+// 				headers: {
+// 					"Content-Type": "application/json; charset=UTF-8",
+// 				},
+// 			});
 
-			if (!response.ok) {
-				throw new Error("No se puedo crear la categoría. Intenta de nuevo por favor.");
-			}
+// 			if (!response.ok) {
+// 				throw new Error("No se puedo crear la categoría. Intenta de nuevo por favor.");
+// 			}
 
-			const data = await response.json();
+// 			const data = await response.json();
 
-			new Response(JSON.stringify(data), {
-				status: 200,
-			});
+// 			new Response(JSON.stringify(data), {
+// 				status: 200,
+// 			});
 
-			return Astro.redirect("/admin/categorias");
-		}
-	} catch (error) {
-		if (error instanceof Error) {
-			console.log(error.message);
-		}
-	}
-}
+// 			return Astro.redirect("/admin/categorias");
+// 		}
+// 	} catch (error) {
+// 		if (error instanceof Error) {
+// 			console.log(error.message);
+// 		}
+// 	}
+// }
 
 // Head metadata
 const title = "Nueva categoría";
@@ -106,6 +107,7 @@ const description = "Crear nueva categoría";
 		>
 			Añade una nueva categoría
 		</Heading>
-		<NewCategoryForm />
+		<!-- <NewCategoryForm /> -->
+		<CategoryForm />
 	</Section>
 </BaseLayout>

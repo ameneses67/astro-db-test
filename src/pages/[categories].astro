@@ -1,7 +1,7 @@
 ---
 // Astro tools
 import type { GetStaticPaths } from "astro";
-import { GET } from "./api/categorias";
+import { db, Category } from "astro:db";
 
 // Layouts
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -14,19 +14,9 @@ import Section from "@ui/Section.astro";
 import BillboardBody from "@components/billboard/BillboardBody.astro";
 import BillboardHeader from "@components/billboard/BillboardHeader.astro";
 
-// Types
-import type { BrandType, CategoryType, ProductType, SizeType } from "src/env";
-
-type Response = {
-	Product: ProductType;
-	Brand: BrandType;
-	Size: SizeType;
-};
-
 // Routes
 export const getStaticPaths = (async () => {
-	const response = await GET(Astro);
-	const categories = (await response.json()) as CategoryType[];
+	const categories = await db.select().from(Category);
 
 	return categories.map((category) => ({
 		params: { categories: slugify(category.name) },
@@ -36,9 +26,9 @@ export const getStaticPaths = (async () => {
 
 const { category } = Astro.props;
 
-// Data
-const response = await fetch(`${Astro.url.origin}/api/productos?categoryId=${category.id}`);
-const products = (await response.json()) as Response[];
+// Product data
+const prodResponse = await fetch(`${Astro.url.origin}/api/productos?categoryId=${category.id}`);
+const products = await prodResponse.json();
 
 // Head metadata
 const title = category.name;

@@ -1,11 +1,8 @@
-// Render mode
 export const prerender = false;
 
-// Astro tools
 import { db, Category, eq } from "astro:db";
 import type { APIRoute } from "astro";
 
-// Utils
 import { imageFileValidation } from "@libs/utils";
 
 export const GET: APIRoute = async ({ request, redirect }) => {
@@ -19,7 +16,7 @@ export const GET: APIRoute = async ({ request, redirect }) => {
 			.from(Category)
 			.where(eq(Category.id, parseInt(id)));
 
-		if (!category) {
+		if (category.length < 1) {
 			return redirect("/404", 307);
 		}
 
@@ -34,7 +31,7 @@ export const GET: APIRoute = async ({ request, redirect }) => {
 	if (name) {
 		const category = await db.select().from(Category).where(eq(Category.name, name));
 
-		if (!category) {
+		if (category.length < 1) {
 			return redirect("/404", 307);
 		}
 
@@ -49,10 +46,7 @@ export const GET: APIRoute = async ({ request, redirect }) => {
 	const categories = await db.select().from(Category);
 
 	if (categories.length < 1) {
-		return new Response(null, {
-			status: 404,
-			statusText: "No se encontraron categorías",
-		});
+		return redirect("/404", 307);
 	}
 
 	return new Response(JSON.stringify(categories), {

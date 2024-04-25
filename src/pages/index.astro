@@ -1,4 +1,7 @@
 ---
+// Astrol tools
+import { GET } from "./api/productos";
+
 // Layouts
 import BaseLayout from "../layouts/BaseLayout.astro";
 
@@ -7,7 +10,7 @@ import Section from "../components/ui/Section.astro";
 import BillboardBody from "../components/billboard/BillboardBody.astro";
 
 // Product data
-const response = await fetch(`${Astro.url.origin}/api/productos`);
+const response = await GET(Astro);
 const products = await response.json();
 
 // Head metadata

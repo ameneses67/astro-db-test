@@ -37,7 +37,7 @@ const { id } = Astro.props;
 
 				if (editBtn.dataset.id !== undefined) {
 					try {
-						const response = await axios.get(`/api/categorias/${editBtn.dataset.id}.json`);
+						const response = await axios.get(`/api/categorias/${editBtn.dataset.id}`);
 
 						const searchParams = new URLSearchParams(Object.entries(response.data[0])).toString();
 

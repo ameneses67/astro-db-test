@@ -1,42 +1,40 @@
 <category-form>
 	<form
-		id="new-category-form"
-		method="POST"
+		action="/admin/categorias"
+		method="post"
 	>
 		<div class="flex flex-col items-start gap-4 md:flex-row">
-			<div class="w-full max-w-xs space-y-2">
+			<div
+				id="name-div"
+				class="w-full max-w-xs space-y-2"
+			>
 				<input
 					name="name"
 					type="text"
 					placeholder="Categoría"
 					class="input input-bordered w-full"
 				/>
-				<!-- {errors.name && <p class="flex items-center gap-2 text-sm text-error">{errors.name}</p>} -->
 			</div>
-			<div class="w-full max-w-xs space-y-2">
+			<div
+				id="description-div"
+				class="w-full max-w-xs space-y-2"
+			>
 				<textarea
 					name="description"
 					class="textarea textarea-bordered w-full"
 					placeholder="Descripción"
 					rows="1"
 				></textarea>
-				<!-- {
-				errors.description && (
-					<p class="flex items-center gap-2 text-sm text-error">{errors.description}</p>
-				)
-			} -->
 			</div>
-			<div class="w-full max-w-xs space-y-2">
+			<div
+				id="image-div"
+				class="w-full max-w-xs space-y-2"
+			>
 				<input
 					name="imagePath"
 					type="file"
 					class="file-input file-input-bordered w-full"
 				/>
-				<!-- {
-				errors.imagePath && (
-					<p class="flex items-center gap-2 text-sm text-error">{errors.imagePath}</p>
-				)
-			} -->
 			</div>
 		</div>
 		<button
@@ -48,44 +46,88 @@
 </category-form>
 
 <script>
-	class CategoryForm extends HTMLElement {
-		responseMessage: string;
+	import { categorySchema } from "src/schemas/categoryForm";
+	import { z } from "zod";
 
+	class CategoryForm extends HTMLElement {
 		constructor() {
 			super();
 
-			this.responseMessage = "";
-			const getResMsg = () => {
-				return this.responseMessage;
-			};
-			const setResMsg = (msg: string) => {
-				this.responseMessage = msg;
-			};
-
+			// Selectors
 			const form = this.querySelector("form") as HTMLFormElement;
+			const nameError = this.querySelector("#name-div") as HTMLDivElement;
+			const descError = this.querySelector("#description-div") as HTMLDivElement;
+			const imgError = this.querySelector("#image-div") as HTMLDivElement;
 
 			form.addEventListener("submit", (e) => handleSubmit(e));
 
 			const handleSubmit = async (e: SubmitEvent) => {
 				e.preventDefault();
 
-				const formData = new FormData(e.target as HTMLFormElement);
+				// Display errors reset
+				const errorPara = this.querySelectorAll(".errorP");
 
-				const response = await fetch("/api/categorias.json", {
-					method: "POST",
-					body: formData,
-				});
+				if (errorPara.length > 0) {
+					errorPara.forEach((el) => el.remove());
+				}
 
-				const data = await response.json();
+				const formData = new FormData(form);
+				const formValues = Object.fromEntries(formData) as z.infer<typeof categorySchema>;
 
-				if (data.message) {
-					setResMsg(data.message);
+				// Category already exists?
+				if (formValues.name !== "") {
+					const response = await fetch(
+						`/api/categorias?name=${formValues.name.toLowerCase().trim()}`
+					);
 
-					const msgP = document.createElement("p");
+					if (response.ok) {
+						displayError("name", "Esta categoria ya exite");
+						return;
+					}
+				}
 
-					msgP.textContent = getResMsg();
+				formValues.imagePath = (formData.get("imagePath") as { name: string }).name;
 
-					form.appendChild(msgP);
+				// Form data validation
+				const formVal = categorySchema.safeParse(formValues);
+
+				if (!formVal.success) {
+					formVal.error.issues.map((err) => displayError(err.path[0] as string, err.message));
+				} else {
+					const response = await fetch(`/api/categorias`, {
+						method: "POST",
+						body: JSON.stringify(formVal.data),
+						headers: {
+							"Content-Type": "application/json; charset=UTF-8",
+						},
+					});
+
+					if (!response.ok) {
+						throw new Error("No se puedo crear la categoría. Intenta de nuevo por favor.");
+					}
+
+					const data = await response.json();
+
+					new Response(JSON.stringify(data), {
+						status: 200,
+					});
+
+					form.reset();
+
+					form.submit();
+				}
+
+				// Errors display
+				function displayError(field: string, msg: string) {
+					const errorP = document.createElement("p");
+
+					errorP.classList.add("errorP", "flex", "items-center", "gap-2", "text-sm", "text-error");
+
+					errorP.textContent = msg;
+
+					field === "name" && nameError.appendChild(errorP);
+					field === "description" && descError.appendChild(errorP);
+					field === "imagePath" && imgError.appendChild(errorP);
 				}
 			};
 		}

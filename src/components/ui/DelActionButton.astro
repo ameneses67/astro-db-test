@@ -28,16 +28,16 @@ const { id } = Astro.props;
 		constructor() {
 			super();
 
-			const delBtn = this.querySelector("[data-id]") as HTMLElement;
+			const delBtn = this.querySelector("[data-id]") as HTMLButtonElement;
 
-			delBtn?.addEventListener("click", () => categoryDelete());
+			delBtn.addEventListener("click", () => categoryDelete());
 
 			const categoryDelete = async () => {
 				delBtn?.closest("ul")?.classList.toggle("hidden");
 
 				if (delBtn.dataset.id !== undefined) {
 					try {
-						const response = await axios.delete(`/api/categorias/${delBtn.dataset.id}.json`);
+						const response = await axios.delete(`/api/categorias/${delBtn.dataset.id}`);
 
 						if (response.status === 200) {
 							delBtn.closest("tr")?.remove();

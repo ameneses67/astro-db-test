@@ -18,7 +18,7 @@ export const GET: APIRoute = async ({ request, redirect }) => {
 			.leftJoin(Size, eq(Product.sizeId, Size.id))
 			.where(eq(Product.id, parseInt(id)));
 
-		if (!product) {
+		if (product.length < 1) {
 			return redirect("/404", 307);
 		}
 
@@ -38,7 +38,7 @@ export const GET: APIRoute = async ({ request, redirect }) => {
 			.leftJoin(Size, eq(Product.sizeId, Size.id))
 			.where(eq(Product.name, name));
 
-		if (!product) {
+		if (product.length < 1) {
 			return redirect("/404", 307);
 		}
 

@@ -1,7 +1,7 @@
 ---
 // Astro tools
 import type { GetStaticPaths } from "astro";
-import { GET } from "./api/subcategorias/index";
+import { db, eq, Subcategory, Category } from "astro:db";
 
 // Layouts
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -14,18 +14,12 @@ import Section from "@ui/Section.astro";
 import BillboardBody from "@components/billboard/BillboardBody.astro";
 import BillboardHeader from "@components/billboard/BillboardHeader.astro";
 
-// Types
-import type { CategoryType, SubcategoryType } from "src/env";
-
-type Subcategory = {
-	Subcategory: SubcategoryType;
-	Category: CategoryType;
-};
-
 // Routes
 export const getStaticPaths = (async () => {
-	const response = await GET(Astro);
-	const subcategories = (await response.json()) as Subcategory[];
+	const subcategories = await db
+		.select()
+		.from(Subcategory)
+		.innerJoin(Category, eq(Subcategory.categoryId, Category.id));
 
 	return subcategories.map((subcategory) => ({
 		params: {
