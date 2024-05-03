@@ -13,6 +13,7 @@ import Heading from "@components/ui/Heading.astro";
 import Section from "@ui/Section.astro";
 import NewCategoryForm from "@components/category/NewCategoryForm.astro";
 import axios from "axios";
+import CategoryForm from "@components/category/CategoryForm.astro";
 
 const catUpdSchema = z.object({
 	name: z
@@ -46,63 +47,63 @@ interface ImagePath {
 }
 
 // Form submission
-export const errors = { name: "", description: "", imagePath: "" };
-if (Astro.request.method === "POST") {
-	try {
-		errors.name = "";
-		errors.description = "";
-		errors.imagePath = "";
+// export const errors = { name: "", description: "", imagePath: "" };
+// if (Astro.request.method === "POST") {
+// 	try {
+// 		errors.name = "";
+// 		errors.description = "";
+// 		errors.imagePath = "";
 
-		const id = Astro.url.searchParams.get("id");
+// 		const id = Astro.url.searchParams.get("id");
 
-		const formData = await Astro.request.formData();
-		const name = formData.get("name");
-		const description = formData.get("description");
-		const imagePath = formData.get("imagePath") as ImagePath;
+// 		const formData = await Astro.request.formData();
+// 		const name = formData.get("name");
+// 		const description = formData.get("description");
+// 		const imagePath = formData.get("imagePath") as ImagePath;
 
-		const data = {} as Data;
+// 		const data = {} as Data;
 
-		if (name) data.name = name;
+// 		if (name) data.name = name;
 
-		if (description) data.description = description;
+// 		if (description) data.description = description;
 
-		if (imagePath.name !== "undefined") data.imagePath = imagePath.name;
+// 		if (imagePath.name !== "undefined") data.imagePath = imagePath.name;
 
-		const formVal = catUpdSchema.safeParse(data);
+// 		const formVal = catUpdSchema.safeParse(data);
 
-		if (!formVal.success) {
-			formVal.error.issues.map((e) => (errors[e.path[0] as keyof typeof errors] += e.message));
-			console.log("Errors: ", errors);
+// 		if (!formVal.success) {
+// 			formVal.error.issues.map((e) => (errors[e.path[0] as keyof typeof errors] += e.message));
+// 			console.log("Errors: ", errors);
 
-			Astro.response.status = 400;
-			Astro.response.statusText = "Data validation failed.";
-		} else {
-			try {
-				const response = await fetch(`http://localhost:4321/api/categorias/${id}.json`, {
-					method: "PATCH",
-					body: JSON.stringify(data),
-					headers: {
-						"Content-Type": "application/json; charset=UTF-8",
-					},
-				});
+// 			Astro.response.status = 400;
+// 			Astro.response.statusText = "Data validation failed.";
+// 		} else {
+// 			try {
+// 				const response = await fetch(`http://localhost:4321/api/categorias/${id}.json`, {
+// 					method: "PATCH",
+// 					body: JSON.stringify(data),
+// 					headers: {
+// 						"Content-Type": "application/json; charset=UTF-8",
+// 					},
+// 				});
 
-				if (!response.ok) {
-					throw new Error("Hubo un error al actualizar la categoría.");
-				}
+// 				if (!response.ok) {
+// 					throw new Error("Hubo un error al actualizar la categoría.");
+// 				}
 
-				const dataRes = response.json();
+// 				const dataRes = response.json();
 
-				return Astro.redirect("/admin/categorias");
-			} catch (error) {
-				console.error(error);
-			}
-		}
-	} catch (error) {
-		if (error instanceof Error) {
-			console.log(error.message);
-		}
-	}
-}
+// 				return Astro.redirect("/admin/categorias");
+// 			} catch (error) {
+// 				console.error(error);
+// 			}
+// 		}
+// 	} catch (error) {
+// 		if (error instanceof Error) {
+// 			console.log(error.message);
+// 		}
+// 	}
+// }
 
 // Head metadata
 const title = "Editar categoría";
@@ -121,22 +122,21 @@ const description = "Modifica los datos de la categoría";
 		>
 			Modifica los datos de la categoría
 		</Heading>
-		<NewCategoryForm />
+		<!-- <NewCategoryForm /> -->
+		<CategoryForm />
 	</Section>
 </BaseLayout>
 
 <script>
-	const querystring = window.location.search;
+	const nameInput = document.querySelector('#cat-form [name="name"]') as HTMLInputElement;
+	const descInput = document.querySelector("#cat-form textarea") as HTMLTextAreaElement;
 
-	const nameInput = document.querySelector('[name="name"]') as HTMLInputElement;
-	const descInput = document.querySelector("textarea") as HTMLTextAreaElement;
-
-	const params = new URLSearchParams(querystring);
+	const params = new URLSearchParams(location.search);
 
 	nameInput.value = params.get("name") as string;
 	descInput.value = params.get("description") as string;
 
-	const formBtn = document.querySelector("#new-category-form > button") as HTMLButtonElement;
+	const formBtn = document.querySelector("#cat-form > button") as HTMLButtonElement;
 
 	formBtn.textContent = "Guardar cambios";
 </script>
