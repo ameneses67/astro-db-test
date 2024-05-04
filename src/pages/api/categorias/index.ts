@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ request, redirect }) => {
 			.from(Category)
 			.where(eq(Category.id, parseInt(id)));
 
-		if (category.length < 1) {
+		if (!category.length) {
 			return redirect("/404", 307);
 		}
 
@@ -31,7 +31,7 @@ export const GET: APIRoute = async ({ request, redirect }) => {
 	if (name) {
 		const category = await db.select().from(Category).where(eq(Category.name, name));
 
-		if (category.length < 1) {
+		if (!category.length) {
 			return redirect("/404", 307);
 		}
 
@@ -45,7 +45,7 @@ export const GET: APIRoute = async ({ request, redirect }) => {
 
 	const categories = await db.select().from(Category);
 
-	if (categories.length < 1) {
+	if (!categories.length) {
 		return redirect("/404", 307);
 	}
 
@@ -72,7 +72,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 	const catExits = await db.select().from(Category).where(eq(Category.name, name));
 
-	if (catExits.length > 0) {
+	if (catExits.length) {
 		return new Response(
 			JSON.stringify({
 				message: `La categoría '${name}' ya existe`,

@@ -3,11 +3,23 @@ import type { APIRoute } from "astro";
 import { db, eq, Category } from "astro:db";
 
 export const GET: APIRoute = async ({ params, redirect }) => {
-	const id = Number(params.id);
+	const id = params.id;
 
-	const category = await db.select().from(Category).where(eq(Category.id, id));
+	if (!id) {
+		return new Response(
+			JSON.stringify({
+				message: "No se proporcionó ningún ID.",
+			}),
+			{ status: 400 },
+		);
+	}
 
-	if (!category) {
+	const category = await db
+		.select()
+		.from(Category)
+		.where(eq(Category.id, parseInt(id)));
+
+	if (!category.length) {
 		return redirect("/404", 307);
 	}
 
@@ -20,18 +32,18 @@ export const GET: APIRoute = async ({ params, redirect }) => {
 };
 
 export const DELETE: APIRoute = async ({ params }) => {
-	const id = Number(params.id);
+	const id = params.id;
 
 	if (!id) {
 		return new Response(
 			JSON.stringify({
 				message: "No se proporcionó ningún ID.",
 			}),
-			{ status: 404 },
+			{ status: 400 },
 		);
 	}
 
-	await db.delete(Category).where(eq(Category.id, id));
+	await db.delete(Category).where(eq(Category.id, parseInt(id)));
 
 	return new Response(
 		JSON.stringify({
@@ -42,7 +54,7 @@ export const DELETE: APIRoute = async ({ params }) => {
 };
 
 export const PATCH: APIRoute = async ({ request, params }) => {
-	const id = Number(params.id);
+	const id = params.id;
 	const body = await request.json();
 
 	if (!id) {
@@ -50,14 +62,14 @@ export const PATCH: APIRoute = async ({ request, params }) => {
 			JSON.stringify({
 				message: "No se proporcionó ningún ID.",
 			}),
-			{ status: 404 },
+			{ status: 400 },
 		);
 	}
 
 	await db
 		.update(Category)
 		.set(body)
-		.where(eq(Category.id, id))
+		.where(eq(Category.id, parseInt(id)))
 		.returning({ updatedId: Category.id });
 
 	return new Response(JSON.stringify(body), { status: 200 });

@@ -1,13 +1,16 @@
 ---
+// Render mode
+export const prerender = false;
+
 // Astrol tools
-import { GET } from "./api/productos";
+import { GET } from "@pages/api/productos";
 
 // Layouts
-import BaseLayout from "../layouts/BaseLayout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 
 // Components
-import Section from "../components/ui/Section.astro";
-import BillboardBody from "../components/billboard/BillboardBody.astro";
+import Section from "@components/ui/Section.astro";
+import BillboardBody from "@components/billboard/BillboardBody.astro";
 
 // Product data
 const response = await GET(Astro);
@@ -18,10 +21,7 @@ const title = "Astro Db Test";
 const description = "Proyecto para probar la nueva base de datos de Astro.";
 ---
 
-<BaseLayout
-	{title}
-	{description}
->
+<BaseLayout {title} {description}>
 	<Section>
 		<BillboardBody {products} />
 	</Section>

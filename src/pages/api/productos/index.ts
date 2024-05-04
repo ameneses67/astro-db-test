@@ -5,6 +5,7 @@ import { Brand, db, eq, Product, Size } from "astro:db";
 
 export const GET: APIRoute = async ({ request, redirect }) => {
 	const url = new URL(request.url);
+	console.log("url: ", url);
 	const id = url.searchParams.get("id");
 	const name = url.searchParams.get("name");
 	const categoryId = url.searchParams.get("categoryId");

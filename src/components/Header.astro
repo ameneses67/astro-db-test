@@ -8,32 +8,30 @@ const menu = [
 ];
 ---
 
-<header class="navbar bg-base-100 container mx-auto p-0">
-	<div class="flex-1">
-		<a
-			href="/"
-			class="btn btn-ghost text-3xl sm:text-4xl"
-			>Saris</a
-		>
+<header class="bg-base-200">
+	<div class="container navbar mx-auto">
+		<div class="flex-1">
+			<a href="/" class="btn btn-ghost text-3xl sm:text-4xl">Saris</a>
+		</div>
+		<nav class="flex-none">
+			<ul class="menu menu-horizontal px-1">
+				{
+					menu.map((el) => (
+						<li>
+							<a href={el.path}>{el.name}</a>
+						</li>
+					))
+				}
+				<li>
+					<details>
+						<summary> Admin </summary>
+						<ul class="right-0 z-10 rounded-t-none bg-base-200 p-2">
+							<li><a href="/admin/categorias">Categorías</a></li>
+							<li><a href="/admin/subcategorias">Subcategorías</a></li>
+						</ul>
+					</details>
+				</li>
+			</ul>
+		</nav>
 	</div>
-	<nav class="flex-none">
-		<ul class="menu menu-horizontal px-1">
-			{
-				menu.map((el) => (
-					<li>
-						<a href={el.path}>{el.name}</a>
-					</li>
-				))
-			}
-			<li>
-				<details>
-					<summary> Admin </summary>
-					<ul class="p-2 bg-base-200 rounded-t-none z-10 right-0">
-						<li><a href="/admin/categorias">Categorías</a></li>
-						<li><a href="/admin/subcategorias">Subcategorías</a></li>
-					</ul>
-				</details>
-			</li>
-		</ul>
-	</nav>
 </header>
